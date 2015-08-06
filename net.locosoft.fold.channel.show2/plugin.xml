@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="net.locosoft.fold.channel">
+      <channel
+            description="support for ODroid Show2 LCD"
+            id="show2"
+            implementation="net.locosoft.fold.channel.show2.internal.Show2Channel">
+      </channel>
+   </extension>
+
+</plugin>
