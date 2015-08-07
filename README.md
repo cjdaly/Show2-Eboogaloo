@@ -21,10 +21,10 @@ So does the MicroView suck? Not at all! The MicroView is a very well designed an
 
 How do I express my love for the Show2? Read on...
 
-### prerequisites
+### prereqs
 
-- Linux machine connected to Show2
-- Java 7 or 8
+- Linux machine connected to Show2 via USB
+- Java 7 or 8 runtime
 
 ### initial setup
 
@@ -39,3 +39,7 @@ Then get Show2-Eboogaloo bits:
     cd
     git clone https://github.com/cjdaly/Show2-Eboogaloo.git
     cd Show2-Eboogaloo
+
+### use with fold
+
+...
