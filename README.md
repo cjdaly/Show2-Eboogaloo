@@ -38,7 +38,8 @@ Then get Show2-Eboogaloo bits:
 
     cd
     git clone https://github.com/cjdaly/Show2-Eboogaloo.git
-    cd Show2-Eboogaloo
+    cd Show2-Eboogaloo/Show2-Eboogaloo-SETUP
+    ant -f setup.xml
 
 ### use with fold
 
