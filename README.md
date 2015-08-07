@@ -10,11 +10,11 @@ So does the MicroView suck? Not at all! The MicroView is a very well designed an
 <tr><td>bigger is better - more pixels (320x200 vs. 64x48) and larger screen make for easier reading</td><td>+2</td><td></td><td>small is beautiful - it really depends on the application</td><td>+1</td></tr>
 <tr><td>color</td><td>+64</td><td></td><td>(crickets)</td><td>0</td></tr>
 <tr><td>Arduino driver sketch (apparently) written by Lady Ada</td><td>+7</td><td></td><td>Geek Ammo kickstarter team performed admirably</td><td>+6</td></tr>
-<tr><td>price: about <a href='http://ameridroid.com/products/odroid-show-2'>$27</a></td><td>+3</td><td></td><td>Sparkfun has it for about <a href='https://www.sparkfun.com/products/12923'>$40</a>, but you probably also want <a href='https://www.sparkfun.com/products/12924'>this</a> this for $15 to go with.</td><td>-20</td></tr>
+<tr><td>price: about <a href='http://ameridroid.com/products/odroid-show-2'>$27</a></td><td>+3</td><td></td><td>Sparkfun has it for about <a href='https://www.sparkfun.com/products/12923'>$40</a>, but you probably also want <a href='https://www.sparkfun.com/products/12924'>this</a> this for $15 to go with.</td><td>-25</td></tr>
 <tr><td>bare/unfinished part</td><td>0</td><td></td><td>superb style and finish</td><td>+16</td></tr>
 <tr><td>breakout pins</td><td>+12</td><td></td><td>breakout pins</td><td>+16</td></tr>
 <tr><td>buttons and LEDs</td><td>+6</td><td></td><td>(crickets)</td><td>0</td></tr>
-<tr><td></td><td><b>96</b></td><td></td><td></td><td><b>19</b></td></tr>
+<tr><td></td><td><b>96</b></td><td></td><td></td><td><b>14</b></td></tr>
 </table>
 
 (_Note: the scoring system was approved by her Majesty's royal auditors at Top Gear BBC._)
