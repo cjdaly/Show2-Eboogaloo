@@ -19,7 +19,7 @@ So does the MicroView suck? Not at all! The MicroView is a very well designed an
 
 (_Note: the scoring system was approved by her Majesty's royal auditors at Top Gear BBC._)
 
-So, how to express this love? Read on...
+How do I express my love for the Show2? Read on...
 
 ### prerequisites
 
@@ -31,7 +31,8 @@ So, how to express this love? Read on...
 First make sure Linux tool dependencies are installed:
 
     sudo apt-get update
-    sudo apt-get install ant git
+    sudo apt-get install ant git python-pip
+    sudo pip install ino
 
 Then get Show2-Eboogaloo bits:
 
