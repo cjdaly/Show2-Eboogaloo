@@ -7,7 +7,7 @@ So does the MicroView suck? Not at all! The MicroView is a very well designed an
 
 <table>
 <tr><th>Show2</th><th></th><th></th><th>MicroView</th><th></th></tr>
-<tr><td>bigger is better - more pixels (320x200 vs. 64x48) and larger screen make for easier reading</td><td>+1</td><td></td><td>small is beautiful - it really depends on the application</td><td>+1</td></tr>
+<tr><td>bigger is better - more pixels (320x200 vs. 64x48) and larger screen make for easier reading</td><td>+2</td><td></td><td>small is beautiful - it really depends on the application</td><td>+1</td></tr>
 <tr><td>color</td><td>+64</td><td></td><td>(crickets)</td><td>0</td></tr>
 <tr><td>Arduino driver sketch (apparently) written by Lady Ada</td><td>+7</td><td></td><td>Geek Ammo kickstarter team performed admirably</td><td>+6</td></tr>
 <tr><td>price: about <a href='http://ameridroid.com/products/odroid-show-2'>$27</a></td><td>+3</td><td></td><td>Sparkfun has it for about <a href='https://www.sparkfun.com/products/12923'>$40</a>, but you probably also want <a href='https://www.sparkfun.com/products/12924'>this</a> this for $15.</td><td>-20</td></tr>
@@ -17,3 +17,23 @@ So does the MicroView suck? Not at all! The MicroView is a very well designed an
 </table>
 
 (_Note: the scoring system was approved by her Majesty's royal auditors at Top Gear BBC._)
+
+So, how to express this love? Read on...
+
+### prerequisites
+
+- Linux machine connected to Show2
+- Java 7 or 8
+
+### initial setup
+
+First make sure Linux tool dependencies are installed:
+
+    sudo apt-get update
+    sudo apt-get install ant git
+
+Then get Show2-Eboogaloo bits:
+
+    cd
+    git clone https://github.com/cjdaly/Show2-Eboogaloo.git
+    cd Show2-Eboogaloo
