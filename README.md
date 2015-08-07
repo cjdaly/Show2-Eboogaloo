@@ -34,7 +34,7 @@ First make sure Linux tool dependencies are installed:
     sudo apt-get install ant git python-pip
     sudo pip install ino
 
-Then get Show2-Eboogaloo bits:
+Then get Show2-Eboogaloo bits and run setup script:
 
     cd
     git clone https://github.com/cjdaly/Show2-Eboogaloo.git
