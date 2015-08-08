@@ -1,0 +1,55 @@
+<!--
+ - Copyright (c) 2015 Chris J Daly (github user cjdaly)
+ - All rights reserved. This program and the accompanying materials
+ - are made available under the terms of the Eclipse Public License v1.0
+ - which accompanies this distribution, and is available at
+ - http://www.eclipse.org/legal/epl-v10.html
+ -
+ - Contributors:
+ -   cjdaly - initial API and implementation
+-->
+<project name="Show2-Eboogaloo-setup" default="main">
+
+	<target name="main" depends="init,get-ODROID-SHOW,gcc-port_open,set-Show2-tty">
+	</target>
+
+	<target name="init">
+		<property name="ODROID-SHOW.dir" value="./ODROID-SHOW-master" />
+		<property name="ODROID-SHOW.zip" value="./ODROID-SHOW.zip" />
+		<available property="ODROID-SHOW.available" file="${ODROID-SHOW.dir}" type="dir" />
+	</target>
+
+	<target name="get-ODROID-SHOW" depends="get-ODROID-SHOW.zip">
+	</target>
+
+	<target name="get-ODROID-SHOW.zip" unless="ODROID-SHOW.available">
+		<delete file="${ODROID-SHOW.zip}" />
+		<get src="https://github.com/hardkernel/ODROID-SHOW/archive/master.zip" dest="${ODROID-SHOW.zip}" />
+		<unzip src="${ODROID-SHOW.zip}" dest="." />
+	</target>
+
+	<target name="gcc-port_open" depends="get-ODROID-SHOW">
+		<!-- remove the infinite loop -->
+		<replaceregexp file="${ODROID-SHOW.dir}/example/linux/port_open.c">
+			<regexp pattern="while\(1\)\s*sleep\(\d+\);" />
+			<substitution expression="" />
+		</replaceregexp>
+
+		<delete file="${ODROID-SHOW.dir}/example/linux/port_open" />
+		<exec executable="gcc" dir="${ODROID-SHOW.dir}/example/linux">
+			<arg value="-o" />
+			<arg value="port_open" />
+			<arg value="port_open.c" />
+		</exec>
+	</target>
+
+	<target name="set-Show2-tty">
+		<exec executable="bash" dir="." outputproperty="Show2-tty" failonerror="true">
+			<arg value="find-show2-ttys.sh" />
+			<arg value="-first" />
+		</exec>
+
+		<echo>Show2 device file: ${Show2-tty}</echo>
+	</target>
+
+</project>
