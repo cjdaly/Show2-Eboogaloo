@@ -21,7 +21,7 @@ So does the MicroView suck? Not at all! The MicroView is a very well designed an
 
 (_Scoring system approved by her Majesty's royal auditors at Top Gear BBC._)
 
-How do I express my love for the Show2? Read on...
+How do I express my love for the Show2? Read on ... (safe for work!) ...
 
 ### prereqs
 
@@ -43,6 +43,6 @@ Then get Show2-Eboogaloo bits and run setup script:
     cd Show2-Eboogaloo/Show2-Eboogaloo-SETUP
     ant -f setup.xml
 
-### use with fold
+### fold extension channel
 
 ...
