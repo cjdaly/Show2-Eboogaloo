@@ -1,7 +1,7 @@
 
 ## Show2-Eboogaloo
 
-This is a love letter to a great part: the ODroid [Show2](http://odroid.com/dokuwiki/doku.php?id=en:odroidshow).  It's an Arduino with a screen! Does that sound familiar? Maybe you remember the MicroView [Kickstarter](https://www.kickstarter.com/projects/1516846343/microview-chip-sized-arduino-with-built-in-oled-di).  The MicroView is another Arduino with built-in display.  In fact the Show2 and the MicroView use the same (ATMEL ATmega328P) Arduino SOC. Here is a look at both of them in action (attached to an ODroid-XU4):
+This is a love letter to a great part: the ODroid [Show2](http://odroid.com/dokuwiki/doku.php?id=en:odroidshow).  It's an Arduino with a screen! Does that sound familiar? Maybe you remember the MicroView [Kickstarter](https://www.kickstarter.com/projects/1516846343/microview-chip-sized-arduino-with-built-in-oled-di).  The MicroView is another Arduino with built-in display.  In fact the Show2 and the MicroView use the same (ATMEL ATmega328P) Arduino SOC. Here is a look at both of them in action (attached to an ODroid-XU4, Show2 on left):
 
 ![Show2 and MicroView](https://github.com/cjdaly/Show2-Eboogaloo/blob/master/images/Show2-and-MicroView.jpg?raw=true)
 
@@ -43,6 +43,3 @@ Then get Show2-Eboogaloo bits and run setup script:
     cd Show2-Eboogaloo/Show2-Eboogaloo-SETUP
     ant -f setup.xml
 
-### fold extension channel
-
-...
