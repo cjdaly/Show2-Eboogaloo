@@ -214,7 +214,7 @@ public abstract class Show2Command {
 	}
 
 	public static class PortOpenPath extends Show2Command {
-		private static final Pattern _Pattern = Pattern.compile("-!(/.*)");
+		private static final Pattern _Pattern = Pattern.compile("--(/.*)");
 
 		public PortOpenPath(String command) {
 			super(_Pattern, command);
@@ -336,7 +336,7 @@ public abstract class Show2Command {
 			switch (command.substring(0, 3)) {
 			case "-/d":
 				return new Show2Command.DevicePath(command);
-			case "-!/":
+			case "--/":
 				return new Show2Command.DevicePath(command);
 			case "-ds":
 				return new Show2Command.DelaySeconds(command);

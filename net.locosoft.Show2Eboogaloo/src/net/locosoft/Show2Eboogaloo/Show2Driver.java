@@ -25,7 +25,8 @@ public class Show2Driver {
 			usage("  xN - set cursor X position");
 			usage("  yN - set cursor Y position");
 			usage(" Meta commands");
-			usage("  -/dev/ttyUSBN - path to Show2 device; first command only!");
+			usage("  -/dev/ttyUSBN - full path to Show2 device");
+			usage("  --/.../port_open - full path to port_open command");
 			usage("  -dsN - delay N seconds");
 			usage("  -dmsN - delay N milliseconds");
 			usage("  -dDmsN - set the default write delay in millis");
