@@ -192,7 +192,7 @@ public abstract class Show2Command {
 	// Meta Commands
 	//
 	public static class DevicePath extends Show2Command {
-		private static final Pattern _Pattern = Pattern.compile("-(/dev/.*)");
+		private static final Pattern _Pattern = Pattern.compile("-T(/dev/.*)");
 
 		public DevicePath(String command) {
 			super(_Pattern, command);
@@ -214,7 +214,7 @@ public abstract class Show2Command {
 	}
 
 	public static class PortOpenPath extends Show2Command {
-		private static final Pattern _Pattern = Pattern.compile("--(/.*)");
+		private static final Pattern _Pattern = Pattern.compile("-P(/.*)");
 
 		public PortOpenPath(String command) {
 			super(_Pattern, command);
@@ -334,10 +334,10 @@ public abstract class Show2Command {
 			if (command.length() < 3)
 				return null;
 			switch (command.substring(0, 3)) {
-			case "-/d":
+			case "-T/":
 				return new Show2Command.DevicePath(command);
-			case "--/":
-				return new Show2Command.DevicePath(command);
+			case "-P/":
+				return new Show2Command.PortOpenPath(command);
 			case "-ds":
 				return new Show2Command.DelaySeconds(command);
 			case "-dm":
