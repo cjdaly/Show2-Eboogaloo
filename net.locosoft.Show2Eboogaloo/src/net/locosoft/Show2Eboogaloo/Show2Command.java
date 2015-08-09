@@ -179,9 +179,9 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			writer.write(_CHAR_ESCAPE);
-			writer.write("[P");
+			writer.write("[");
 			writer.write(Integer.toString(_x));
-			writer.write(";P");
+			writer.write(";");
 			writer.write(Integer.toString(_y));
 			writer.write("H");
 			writer.flush();
