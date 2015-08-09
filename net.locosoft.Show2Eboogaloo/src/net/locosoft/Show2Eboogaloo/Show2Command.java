@@ -181,7 +181,7 @@ public abstract class Show2Command {
 			writer.write(_CHAR_ESCAPE);
 			writer.write("[P");
 			writer.write(Integer.toString(_x));
-			writer.write(";");
+			writer.write(";P");
 			writer.write(Integer.toString(_y));
 			writer.write("H");
 			writer.flush();

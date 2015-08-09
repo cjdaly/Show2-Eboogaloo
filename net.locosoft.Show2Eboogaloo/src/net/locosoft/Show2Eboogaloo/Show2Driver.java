@@ -31,7 +31,7 @@ public class Show2Driver {
 			usage("  -dDmsN - set the default write delay in millis");
 			usage("  -echoN - echo on (N=1) or off (N=0)");
 			usage(" Examples");
-			usage("  show2 -/dev/ttyUSB0 fg2 +hello -ds2 fg3 '+ world'");
+			usage("  show2 -/dev/ttyUSB0 fg2 +hello -ds1 fg3 '+ world'");
 		} else {
 			Show2Commands commands = new Show2Commands(args);
 			commands.read();

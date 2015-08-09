@@ -54,6 +54,7 @@ public class Show2Session {
 				if (portOpenFile.exists() && portOpenFile.canExecute()) {
 					Show2Util.execPortOpen(_portOpenPath, _devicePath);
 				}
+				Thread.sleep(2000); // wait for Show2 reset
 				_commands.eval(writer, Show2Session.this);
 			} catch (FileNotFoundException ex) {
 				ex.printStackTrace();
