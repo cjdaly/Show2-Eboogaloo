@@ -22,7 +22,7 @@ public abstract class Show2Command {
 	private Pattern _pattern;
 	private String _command;
 
-	// TODO: generate usage message
+	// TODO: generate usage message -- use attributes!
 	private String _doc;
 	private int _order;
 
@@ -355,7 +355,8 @@ public abstract class Show2Command {
 	}
 
 	public static class PortOpenPath extends Show2Command {
-		private static final Pattern _Pattern = Pattern.compile("-P(/.*)");
+		private static final Pattern _Pattern = Pattern
+				.compile("-P(d|[/\\.].*)");
 
 		public PortOpenPath(String command) {
 			super(_Pattern, command);
@@ -363,15 +364,21 @@ public abstract class Show2Command {
 
 		protected boolean readParams(Matcher matcher) {
 			_path = matcher.group(1);
+			_unDefault = _path.equals("d");
 			return true;
 		}
 
+		private boolean _unDefault;
 		private String _path;
 
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				session._portOpenPath = _path;
+				if (_unDefault) {
+					session._portOpenPath = null;
+				} else {
+					session._portOpenPath = _path;
+				}
 			}
 		}
 	}

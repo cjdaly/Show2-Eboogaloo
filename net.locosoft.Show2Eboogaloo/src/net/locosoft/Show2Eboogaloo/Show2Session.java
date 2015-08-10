@@ -22,7 +22,7 @@ public class Show2Session {
 	private Show2Commands _commands;
 
 	// TODO: hold session open for fold channel traffic
-	boolean _keepAlive = false;
+	private boolean _keepAlive = false;
 
 	boolean _echo = false;
 	long _postCommandDelay = 100;
@@ -32,11 +32,9 @@ public class Show2Session {
 
 	public Show2Session(Show2Commands commands) {
 		_commands = commands;
-
 		_devicePath = "/dev/ttyUSB0";
-		_portOpenPath = "/home/"
-				+ System.getProperty("user.name")
-				+ "/Show2-Eboogaloo/Show2-Eboogaloo-SETUP/ODROID-SHOW-master/example/linux/port_open";
+		_portOpenPath = System.getProperty("user.home")
+				+ "/ODROID-SHOW/example/linux/port_open";
 	}
 
 	public void init() {
@@ -53,12 +51,18 @@ public class Show2Session {
 		public void run() {
 			try (BufferedWriter writer = new BufferedWriter(new FileWriter(
 					_devicePath, true))) {
-				File portOpenFile = new File(_portOpenPath);
-				if (portOpenFile.exists() && portOpenFile.canExecute()) {
-					Show2Util.execPortOpen(_portOpenPath, _devicePath);
+
+				if (_portOpenPath != null) {
+					File portOpenFile = new File(_portOpenPath);
+					if (portOpenFile.exists() && portOpenFile.canExecute()) {
+						Show2Util.execPortOpen(_portOpenPath, _devicePath);
+					}
 				}
+
 				Thread.sleep(2000); // wait for Show2 reset
+
 				_commands.eval(writer, Show2Session.this);
+
 			} catch (FileNotFoundException ex) {
 				ex.printStackTrace();
 			} catch (IOException ex) {
