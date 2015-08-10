@@ -25,7 +25,7 @@ public class Show2Session {
 	boolean _keepAlive = false;
 
 	boolean _echo = false;
-	long _postCommandDelay = 500;
+	long _postCommandDelay = 100;
 
 	String _devicePath;
 	String _portOpenPath;

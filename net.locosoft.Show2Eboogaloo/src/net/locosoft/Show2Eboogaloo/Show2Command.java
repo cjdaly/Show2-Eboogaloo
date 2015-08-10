@@ -116,8 +116,55 @@ public abstract class Show2Command {
 		}
 	}
 
+	public static abstract class HasXY extends Show2Command {
+		public HasXY(Pattern pattern, String command, char key) {
+			super(pattern, command);
+			_key = key;
+		}
+
+		private char _key;
+
+		protected boolean readParams(Matcher matcher) {
+			_x = getValue(matcher.group(1), 1);
+			_y = getValue(matcher.group(2), 1);
+			return true;
+		}
+
+		protected int _x;
+		protected int _y;
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			writer.write(_CHAR_ESCAPE);
+			writer.write("[");
+			writer.write(Integer.toString(_x));
+			writer.write(";");
+			writer.write(Integer.toString(_y));
+			writer.write(_key);
+			writer.flush();
+		}
+	}
+
+	public static class DOT extends HasXY {
+		private static final Pattern _Pattern = Pattern
+				.compile("dot(\\d+),(\\d+)");
+
+		public DOT(String command) {
+			super(_Pattern, command, 'x');
+		}
+	}
+
 	//
 	// cursor movement
+
+	public static class XY extends HasXY {
+		private static final Pattern _Pattern = Pattern
+				.compile("xy(\\d+),(\\d+)");
+
+		public XY(String command) {
+			super(_Pattern, command, 'H');
+		}
+	}
 
 	public static class CR extends Show2Command {
 		private static final Pattern _Pattern = Pattern.compile("cr");
@@ -169,8 +216,8 @@ public abstract class Show2Command {
 				throws IOException, InterruptedException {
 			writer.write(_CHAR_ESCAPE);
 			writer.write("[");
-			writer.write(_key);
 			writer.write(_count);
+			writer.write(_key);
 			writer.flush();
 		}
 	}
@@ -204,35 +251,6 @@ public abstract class Show2Command {
 
 		public LT(String command) {
 			super(_Pattern, command, 'D');
-		}
-	}
-
-	public static class XY extends Show2Command {
-		private static final Pattern _Pattern = Pattern
-				.compile("xy(\\d+),(\\d+)");
-
-		public XY(String command) {
-			super(_Pattern, command);
-		}
-
-		protected boolean readParams(Matcher matcher) {
-			_x = getValue(matcher.group(1), 1);
-			_y = getValue(matcher.group(2), 1);
-			return true;
-		}
-
-		private int _x;
-		private int _y;
-
-		public void eval(BufferedWriter writer, Show2Session session)
-				throws IOException, InterruptedException {
-			writer.write(_CHAR_ESCAPE);
-			writer.write("[");
-			writer.write(Integer.toString(_x));
-			writer.write(";");
-			writer.write(Integer.toString(_y));
-			writer.write("H");
-			writer.flush();
 		}
 	}
 
