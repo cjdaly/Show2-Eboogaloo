@@ -72,7 +72,7 @@
 		<delete file="${show_main.dir}/src/sketch.ino" />
 		<copy todir="${show_main.dir}/src" file="${show_main.ino}" />
 		<copy todir="${show_main.dir}/lib">
-			<fileset dir="${ODROID-SHOW.dir}/libraries" includes="*" />
+			<fileset dir="${ODROID-SHOW.dir}/libraries" includes="**" />
 		</copy>
 	</target>
 
