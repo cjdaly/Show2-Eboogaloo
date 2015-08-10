@@ -511,6 +511,8 @@ public abstract class Show2Command {
 			case "-T/":
 				return new Show2Command.DevicePath(command);
 			case "-P/":
+			case "-P.":
+			case "-Pd":
 				return new Show2Command.PortOpenPath(command);
 			case "-ds":
 				return new Show2Command.DelaySeconds(command);
