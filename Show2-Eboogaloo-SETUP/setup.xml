@@ -10,13 +10,21 @@
 -->
 <project name="Show2-Eboogaloo-setup" default="main">
 
-	<target name="main" depends="init,get-ODROID-SHOW,gcc-port_open,set-Show2-tty">
-	</target>
+	<target name="main" depends="
+		init,
+		get-ODROID-SHOW,
+		gcc-port_open,
+		set-Show2-tty,
+		Show2-sketch.build" />
 
 	<target name="init">
-		<property name="ODROID-SHOW.dir" value="./ODROID-SHOW-master" />
+		<property name="ODROID-SHOW.dir" value="./ODROID-SHOW" />
 		<property name="ODROID-SHOW.zip" value="./ODROID-SHOW.zip" />
 		<available property="ODROID-SHOW.available" file="${ODROID-SHOW.dir}" type="dir" />
+
+		<property name="show_main.ino" value="${ODROID-SHOW.dir}/show_main/show_main.ino" />
+		<property name="show_main.dir" value="./show_main" />
+		<available property="show_main.available" file="${show_main.dir}" type="dir" />
 	</target>
 
 	<target name="get-ODROID-SHOW" depends="get-ODROID-SHOW.zip">
@@ -24,8 +32,19 @@
 
 	<target name="get-ODROID-SHOW.zip" unless="ODROID-SHOW.available">
 		<delete file="${ODROID-SHOW.zip}" />
+		<!--
 		<get src="https://github.com/hardkernel/ODROID-SHOW/archive/master.zip" dest="${ODROID-SHOW.zip}" />
 		<unzip src="${ODROID-SHOW.zip}" dest="." />
+		-->
+		<exec executable="git" dir="." failonerror="true">
+			<arg value="clone" />
+			<arg value="https://github.com/hardkernel/ODROID-SHOW.git" />
+		</exec>
+		<exec executable="git" dir="${ODROID-SHOW.dir}" failonerror="true">
+			<arg value="checkout" />
+			<!-- version 1.6 -->
+			<arg value="6f60da2514d4be7743a7c6a4c8a7c59ffbe848ed" />
+		</exec>
 	</target>
 
 	<target name="gcc-port_open" depends="get-ODROID-SHOW">
@@ -44,12 +63,29 @@
 	</target>
 
 	<target name="set-Show2-tty">
-		<exec executable="bash" dir="." outputproperty="Show2-tty" failonerror="true">
+		<exec executable="bash" dir="." outputproperty="Show2-tty" failonerror="false">
 			<arg value="find-show2-ttys.sh" />
 			<arg value="-first" />
 		</exec>
-
 		<echo>Show2 device file: ${Show2-tty}</echo>
+	</target>
+
+	<target name="Show2-sketch.setup" unless="show_main.available">
+		<mkdir dir="${show_main.dir}" />
+		<exec executable="ino" dir="${show_main.dir}" failonerror="true">
+			<arg value="init" />
+		</exec>
+		<delete file="${show_main.dir}/src/sketch.ino" />
+		<copy todir="${show_main.dir}/src" file="${show_main.ino}" />
+		<copy todir="${show_main.dir}/lib">
+			<fileset dir="${ODROID-SHOW.dir}/libraries" includes="*" />
+		</copy>
+	</target>
+
+	<target name="Show2-sketch.build" depends="Show2-sketch.setup">
+		<exec executable="ino" dir="${show_main.dir}" failonerror="true">
+			<arg value="build" />
+		</exec>
 	</target>
 
 </project>
