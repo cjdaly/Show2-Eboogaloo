@@ -18,8 +18,7 @@
 		Show2-sketch.build" />
 
 	<target name="init">
-		<property name="ODROID-SHOW.dir" value="./ODROID-SHOW" />
-		<property name="ODROID-SHOW.zip" value="./ODROID-SHOW.zip" />
+		<property name="ODROID-SHOW.dir" value="${user.home}/ODROID-SHOW" />
 		<available property="ODROID-SHOW.available" file="${ODROID-SHOW.dir}" type="dir" />
 
 		<property name="show_main.ino" value="${ODROID-SHOW.dir}/show_main/show_main.ino" />
@@ -27,16 +26,11 @@
 		<available property="show_main.available" file="${show_main.dir}" type="dir" />
 	</target>
 
-	<target name="get-ODROID-SHOW" depends="get-ODROID-SHOW.zip">
+	<target name="get-ODROID-SHOW" depends="get-ODROID-SHOW.repo">
 	</target>
 
-	<target name="get-ODROID-SHOW.zip" unless="ODROID-SHOW.available">
-		<delete file="${ODROID-SHOW.zip}" />
-		<!--
-		<get src="https://github.com/hardkernel/ODROID-SHOW/archive/master.zip" dest="${ODROID-SHOW.zip}" />
-		<unzip src="${ODROID-SHOW.zip}" dest="." />
-		-->
-		<exec executable="git" dir="." failonerror="true">
+	<target name="get-ODROID-SHOW.repo" unless="ODROID-SHOW.available">
+		<exec executable="git" dir="${user.home}" failonerror="true">
 			<arg value="clone" />
 			<arg value="https://github.com/hardkernel/ODROID-SHOW.git" />
 		</exec>
