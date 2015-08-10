@@ -21,6 +21,9 @@ public class Show2Session {
 
 	private Show2Commands _commands;
 
+	// TODO: hold session open for fold channel traffic
+	boolean _keepAlive = false;
+
 	boolean _echo = false;
 	long _postCommandDelay = 500;
 

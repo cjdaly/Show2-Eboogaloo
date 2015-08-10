@@ -12,6 +12,7 @@
 package net.locosoft.Show2Eboogaloo;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,6 +21,10 @@ public abstract class Show2Command {
 
 	private Pattern _pattern;
 	private String _command;
+
+	// TODO: generate usage message
+	private String _doc;
+	private int _order;
 
 	public Show2Command(Pattern pattern, String command) {
 		_pattern = pattern;
@@ -86,6 +91,7 @@ public abstract class Show2Command {
 
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
+			// TODO: break up into chunks
 			writer.write(_text);
 			writer.flush();
 		}
@@ -108,8 +114,130 @@ public abstract class Show2Command {
 			writer.write("[2J");
 			writer.flush();
 		}
-
 	}
+
+	//
+	// cursor movement
+
+	public static class CR extends Show2Command {
+		private static final Pattern _Pattern = Pattern.compile("cr");
+
+		public CR(String command) {
+			super(_Pattern, command);
+		}
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			writer.write('\r');
+			writer.flush();
+		}
+	}
+
+	public static class LF extends Show2Command {
+		private static final Pattern _Pattern = Pattern.compile("lf");
+
+		public LF(String command) {
+			super(_Pattern, command);
+		}
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			writer.write('\n');
+			writer.flush();
+		}
+	}
+
+	public static abstract class CursorMove extends Show2Command {
+		public CursorMove(Pattern pattern, String command, char key) {
+			super(pattern, command);
+			_key = key;
+		}
+
+		private char _key;
+
+		protected boolean readParams(Matcher matcher) {
+			String count = matcher.group(1);
+			if (count != null) {
+				_count = count;
+			}
+			return true;
+		}
+
+		protected String _count = "";
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			writer.write(_CHAR_ESCAPE);
+			writer.write("[");
+			writer.write(_key);
+			writer.write(_count);
+			writer.flush();
+		}
+	}
+
+	public static class UP extends CursorMove {
+		private static final Pattern _Pattern = Pattern.compile("up(\\d*)");
+
+		public UP(String command) {
+			super(_Pattern, command, 'A');
+		}
+	}
+
+	public static class DN extends CursorMove {
+		private static final Pattern _Pattern = Pattern.compile("dn(\\d*)");
+
+		public DN(String command) {
+			super(_Pattern, command, 'B');
+		}
+	}
+
+	public static class RT extends CursorMove {
+		private static final Pattern _Pattern = Pattern.compile("rt(\\d*)");
+
+		public RT(String command) {
+			super(_Pattern, command, 'C');
+		}
+	}
+
+	public static class LT extends CursorMove {
+		private static final Pattern _Pattern = Pattern.compile("lt(\\d*)");
+
+		public LT(String command) {
+			super(_Pattern, command, 'D');
+		}
+	}
+
+	public static class XY extends Show2Command {
+		private static final Pattern _Pattern = Pattern
+				.compile("xy(\\d+),(\\d+)");
+
+		public XY(String command) {
+			super(_Pattern, command);
+		}
+
+		protected boolean readParams(Matcher matcher) {
+			_x = getValue(matcher.group(1), 1);
+			_y = getValue(matcher.group(2), 1);
+			return true;
+		}
+
+		private int _x;
+		private int _y;
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			writer.write(_CHAR_ESCAPE);
+			writer.write("[");
+			writer.write(Integer.toString(_x));
+			writer.write(";");
+			writer.write(Integer.toString(_y));
+			writer.write("H");
+			writer.flush();
+		}
+	}
+
+	//
+	// colors
 
 	public static class FG extends Show2Command {
 		private static final Pattern _Pattern = Pattern.compile("fg(\\d)");
@@ -159,38 +287,33 @@ public abstract class Show2Command {
 		}
 	}
 
-	public static class XY extends Show2Command {
+	//
+	// Meta Commands
+	//
+	public static class CommandFile extends Show2Command {
 		private static final Pattern _Pattern = Pattern
-				.compile("xy(\\d+),(\\d+)");
+				.compile("-F([/\\.])(.*)");
 
-		public XY(String command) {
+		public CommandFile(String command) {
 			super(_Pattern, command);
 		}
 
 		protected boolean readParams(Matcher matcher) {
-			_x = getValue(matcher.group(1), 1);
-			_y = getValue(matcher.group(2), 1);
+			_path = matcher.group(1) + matcher.group(2);
 			return true;
 		}
 
-		private int _x;
-		private int _y;
+		private String _path;
 
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
-			writer.write(_CHAR_ESCAPE);
-			writer.write("[");
-			writer.write(Integer.toString(_x));
-			writer.write(";");
-			writer.write(Integer.toString(_y));
-			writer.write("H");
-			writer.flush();
+			File commandFile = new File(_path);
+			if (commandFile.exists() && commandFile.canRead()) {
+				// TODO ... (delegate to Show2Commands)
+			}
 		}
 	}
 
-	//
-	// Meta Commands
-	//
 	public static class DevicePath extends Show2Command {
 		private static final Pattern _Pattern = Pattern.compile("-T(/dev/.*)");
 
@@ -319,6 +442,29 @@ public abstract class Show2Command {
 		}
 	}
 
+	public static class Group extends Show2Command {
+		private static final Pattern _Pattern = Pattern.compile("-?_(\\w*)");
+
+		public Group(String command) {
+			super(_Pattern, command);
+		}
+
+		protected boolean readParams(Matcher matcher) {
+			String name = matcher.group(1);
+			if (name != null) {
+				_name = name;
+			}
+			return true;
+		}
+
+		private String _name = "";
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			System.out.println("Group:" + _name);
+		}
+	}
+
 	//
 	//
 	//
@@ -334,6 +480,9 @@ public abstract class Show2Command {
 			if (command.length() < 3)
 				return null;
 			switch (command.substring(0, 3)) {
+			case "-F/":
+			case "-F.":
+				return new Show2Command.CommandFile(command);
 			case "-T/":
 				return new Show2Command.DevicePath(command);
 			case "-P/":
@@ -346,6 +495,8 @@ public abstract class Show2Command {
 				return new Show2Command.DefaultDelayMilliseconds(command);
 			case "-ec":
 				return new Show2Command.Echo(command);
+			case "-?_":
+				return new Show2Command.Group(command);
 			default:
 				return null;
 			}
@@ -353,12 +504,24 @@ public abstract class Show2Command {
 			switch (command.substring(0, 2)) {
 			case "cl":
 				return new Show2Command.CLS(command);
+			case "cr":
+				return new Show2Command.CR(command);
+			case "lf":
+				return new Show2Command.LF(command);
+			case "up":
+				return new Show2Command.UP(command);
+			case "dn":
+				return new Show2Command.DN(command);
+			case "rt":
+				return new Show2Command.RT(command);
+			case "lt":
+				return new Show2Command.LT(command);
+			case "xy":
+				return new Show2Command.XY(command);
 			case "fg":
 				return new Show2Command.FG(command);
 			case "bg":
 				return new Show2Command.BG(command);
-			case "xy":
-				return new Show2Command.XY(command);
 			default:
 				return null;
 			}
