@@ -33,7 +33,7 @@ How do I express my love for the Show2? Read on ... (safe for work!) ...
 First make sure Linux tool dependencies are installed:
 
     sudo apt-get update
-    sudo apt-get install ant git python-pip
+    sudo apt-get install ant arduino git python-pip
     sudo pip install ino
 
 Then get Show2-Eboogaloo bits and run setup script:
@@ -43,4 +43,16 @@ Then get Show2-Eboogaloo bits and run setup script:
     cd Show2-Eboogaloo/Show2-Eboogaloo-SETUP
     ant -f setup.xml
 
-_but wait, there's more (TODO)..._
+### normal usage
+
+The top level `Show2-Eboogaloo` directory contains two bash scripts.  The `find-show2-ttys.sh` script will search for connected Show2 devices and print their Linux device file path (e.g. `/dev/ttyUSB0`). The `show2.sh` script controls the Show2 by interpreting a series of command line arguments.  Run `./show2.sh` with no arguments to see a usage message.  Here are a few examples:
+
+    ./show2.sh +hello fg3 '+ world'
+
+Note in the example above how quotes are needed for the final argument, because it contains whitespace.  If the Show2 is associated with a non-default device file, use the `-T` argument to specify the correct one:
+
+    ./show2.sh -T/dev/ttyUSB1 +hello fg3 '+ world'
+
+### fold extension channel
+
+_coming soon..._
