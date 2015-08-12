@@ -47,7 +47,7 @@ public class Show2Driver {
 			}
 		}
 
-		line("Show2 EBoogaloo - https://github.com/cjdaly/Show2-Eboogaloo");
+		line("Show2 Eboogaloo - https://github.com/cjdaly/Show2-Eboogaloo");
 		for (Entry<Integer, String> entry : usageFragments.entrySet()) {
 			line(entry.getValue());
 		}

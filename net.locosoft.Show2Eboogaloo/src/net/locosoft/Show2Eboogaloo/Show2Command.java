@@ -427,7 +427,7 @@ public abstract class Show2Command {
 	@Usage(order = 71, text = {
 			"-P/.../port_open - full path to alternate port_open command",
 			"-P./.../port_open - relative path to alternate port_open command",
-			"-P/x - skip invocation of port_open" })
+			"-Px - skip invocation of port_open" })
 	public static class PortOpenPath extends Show2Command {
 		private static final Pattern _Pattern = Pattern
 				.compile("-P(x|[/\\.].*)");
@@ -489,7 +489,7 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				line("Show2-EBoogaloo version 0.1.0.1 for ODROID-SHOW v1.6");
+				line("Show2-EBoogaloo version 0.1.0.2 for ODROID-SHOW v1.6");
 			}
 		}
 
@@ -526,7 +526,7 @@ public abstract class Show2Command {
 				return new Show2Command.DevicePath(command);
 			case "-P/":
 			case "-P.":
-			case "-Pd":
+			case "-Px":
 				return new Show2Command.PortOpenPath(command);
 			case "-ec":
 				return new Show2Command.Echo(command);
