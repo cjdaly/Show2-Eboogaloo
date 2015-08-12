@@ -10,4 +10,9 @@
 #   cjdaly - initial API and implementation
 ####
 
-java -jar plugins/net.locosoft.Show2Eboogaloo_0.1.0.jar "$@"
+# http://www.ostricher.com/2014/10/the-right-way-to-get-the-directory-of-a-bash-script/
+S2EB_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+java -jar $S2EB_HOME/Show2-Eboogaloo-SETUP/plugins/net.locosoft.Show2Eboogaloo_0.1.0.jar "$@"
+
+

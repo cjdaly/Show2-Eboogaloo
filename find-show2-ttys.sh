@@ -20,7 +20,7 @@ if [ ! -d "/dev/serial/by-id" ]; then
 fi
 
 show2_tty_found_count=0
-show2_tty_lines="`ls -l /dev/serial/by-id/$SHOW2_SERIAL_ID_PREFIX* 2>/dev/null | cut -d ' ' -f12 | sort`"
+show2_tty_lines="`ls -l /dev/serial/by-id/$SHOW2_SERIAL_ID_PREFIX* 2>/dev/null | grep -o '../../tty\w\+' | sort`"
 for line in $show2_tty_lines
 do
   show2_tty_path=`readlink -f /dev/serial/by-id/$line`

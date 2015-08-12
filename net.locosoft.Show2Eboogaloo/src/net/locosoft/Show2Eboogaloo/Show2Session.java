@@ -37,8 +37,8 @@ public class Show2Session {
 				+ "/ODROID-SHOW/example/linux/port_open";
 	}
 
-	public void init() {
-		_commands.init(this);
+	public boolean preprocess() {
+		return _commands.preprocess(this);
 	}
 
 	public void eval() throws InterruptedException {

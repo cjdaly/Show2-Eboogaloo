@@ -11,7 +11,10 @@
 
 package net.locosoft.Show2Eboogaloo;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -19,13 +22,33 @@ public class Show2Commands {
 
 	public Show2Commands(String[] commands) {
 		for (String command : commands) {
-			Show2Command show2Command = Show2Command.readCommand(command);
-			if (show2Command == null) {
-				System.out.println("Invalid command: " + command);
-				_invalidCommandCount++;
-			} else {
-				_commands.add(show2Command);
+			loadAndAddCommand(command);
+		}
+	}
+
+	public Show2Commands(String commandFilePath) throws FileNotFoundException,
+			IOException {
+		try (BufferedReader reader = new BufferedReader(new FileReader(
+				commandFilePath))) {
+			String command;
+			while ((command = reader.readLine()) != null) {
+				if (command.trim().isEmpty()) // skip blank lines
+					continue;
+				if (command.startsWith("#")) // skip comments
+					continue;
+
+				loadAndAddCommand(command);
 			}
+		}
+	}
+
+	private void loadAndAddCommand(String command) {
+		Show2Command show2Command = Show2Command.loadCommand(command);
+		if (show2Command == null) {
+			System.out.println("Invalid command: " + command);
+			_invalidCommandCount++;
+		} else {
+			_commands.add(show2Command);
 		}
 	}
 
@@ -36,10 +59,13 @@ public class Show2Commands {
 		}
 	}
 
-	public void init(Show2Session session) {
+	public boolean preprocess(Show2Session session) {
+		boolean foundSessionCommand = false;
 		for (Show2Command command : _commands) {
 			if ((command instanceof Show2Command.DevicePath)
-					|| (command instanceof Show2Command.PortOpenPath)) {
+					|| (command instanceof Show2Command.PortOpenPath)
+					|| (command instanceof Show2Command.Echo)
+					|| (command instanceof Show2Command.Version)) {
 				try {
 					command.eval(null, session);
 				} catch (IOException e) {
@@ -47,8 +73,11 @@ public class Show2Commands {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+			} else {
+				foundSessionCommand = true;
 			}
 		}
+		return foundSessionCommand;
 	}
 
 	public void eval(BufferedWriter writer, Show2Session session)
