@@ -25,7 +25,7 @@ public class Show2Driver {
 			Show2Commands commands = new Show2Commands(args);
 			Show2Session session = new Show2Session(commands);
 			if (session.preprocess())
-				session.start();
+				session.start(true);
 		}
 	}
 

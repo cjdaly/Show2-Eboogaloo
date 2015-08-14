@@ -38,10 +38,12 @@ public class Show2Session {
 		}
 	}
 
-	public void start() throws InterruptedException {
+	public void start(boolean joinSessionThread) throws InterruptedException {
 		CommandWriter writerThread = new CommandWriter();
 		writerThread.start();
-		writerThread.join();
+		if (joinSessionThread) {
+			writerThread.join();
+		}
 	}
 
 	public void stop() {

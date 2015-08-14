@@ -21,9 +21,7 @@ import java.util.ArrayList;
 public class Show2Commands {
 
 	public Show2Commands(String[] commands) {
-		for (String command : commands) {
-			addCommand(command);
-		}
+		addCommands(commands);
 	}
 
 	public Show2Commands(String commandFilePath) throws FileNotFoundException,
@@ -52,6 +50,12 @@ public class Show2Commands {
 			_invalidCommandCount++;
 		} else {
 			_commands.add(show2Command);
+		}
+	}
+
+	public void addCommands(String[] commands) {
+		for (String command : commands) {
+			addCommand(command);
 		}
 	}
 
