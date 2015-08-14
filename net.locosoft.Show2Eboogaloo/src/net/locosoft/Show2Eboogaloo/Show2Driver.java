@@ -23,7 +23,6 @@ public class Show2Driver {
 			showUsage();
 		} else {
 			Show2Commands commands = new Show2Commands(args);
-			commands.read();
 			Show2Session session = new Show2Session(commands);
 			if (session.preprocess())
 				session.start();
@@ -37,11 +36,11 @@ public class Show2Driver {
 			Usage usage = commandClass.getAnnotation(Show2Command.Usage.class);
 			if (usage != null) {
 				String fragment = usage.title();
-				for (String line : usage.text()) {
+				for (String text : usage.text()) {
 					if (!fragment.isEmpty())
 						fragment += "\n";
 					fragment += "  ";
-					fragment += line;
+					fragment += text;
 				}
 				usageFragments.put(usage.order(), fragment);
 			}

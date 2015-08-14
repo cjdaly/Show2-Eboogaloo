@@ -22,7 +22,7 @@ public class Show2Commands {
 
 	public Show2Commands(String[] commands) {
 		for (String command : commands) {
-			loadAndAddCommand(command);
+			addCommand(command);
 		}
 	}
 
@@ -37,12 +37,15 @@ public class Show2Commands {
 				if (command.startsWith("#")) // skip comments
 					continue;
 
-				loadAndAddCommand(command);
+				addCommand(command);
 			}
 		}
 	}
 
-	private void loadAndAddCommand(String command) {
+	public Show2Commands() {
+	}
+
+	public void addCommand(String command) {
 		Show2Command show2Command = Show2Command.loadCommand(command);
 		if (show2Command == null) {
 			System.out.println("Invalid command: " + command);
@@ -52,14 +55,7 @@ public class Show2Commands {
 		}
 	}
 
-	public void read() {
-		for (Show2Command command : _commands) {
-			if (!command.read())
-				_malformedCommandCount++;
-		}
-	}
-
-	public boolean preprocess(Show2Session session) {
+	boolean preprocess(Show2Session session) {
 		boolean foundSessionCommand = false;
 		for (Show2Command command : _commands) {
 			if ((command instanceof Show2Command.DevicePath)
@@ -80,8 +76,15 @@ public class Show2Commands {
 		return foundSessionCommand;
 	}
 
-	public void eval(BufferedWriter writer, Show2Session session)
-			throws IOException, InterruptedException {
+	void read() {
+		for (Show2Command command : _commands) {
+			if (!command.read())
+				_malformedCommandCount++;
+		}
+	}
+
+	void eval(BufferedWriter writer, Show2Session session) throws IOException,
+			InterruptedException {
 		for (Show2Command command : _commands) {
 			if (session._echo) {
 				System.out.println(command.getCommand() + "  "

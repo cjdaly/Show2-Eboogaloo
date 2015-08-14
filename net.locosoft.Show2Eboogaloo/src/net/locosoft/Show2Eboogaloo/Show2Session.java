@@ -71,17 +71,16 @@ public class Show2Session {
 				}
 				Thread.sleep(2000); // wait for Show2 reset
 
-				Show2Commands commands = dequeueCommands();
-				if (commands != null) {
-					commands.eval(writer, Show2Session.this);
-
-					while (_keepYourselfAlive) {
-						commands = dequeueCommands();
-						if (commands != null) {
-							commands.eval(writer, Show2Session.this);
-						}
+				do {
+					Show2Commands commands = dequeueCommands();
+					if (commands != null) {
+						commands.read();
+						commands.eval(writer, Show2Session.this);
+					} else {
+						Thread.sleep(100);
 					}
-				}
+				} while (_keepYourselfAlive);
+
 			} catch (FileNotFoundException ex) {
 				ex.printStackTrace();
 			} catch (IOException ex) {

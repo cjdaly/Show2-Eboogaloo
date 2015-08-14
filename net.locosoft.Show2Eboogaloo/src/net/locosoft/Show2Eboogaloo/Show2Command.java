@@ -76,7 +76,7 @@ public abstract class Show2Command {
 	//
 
 	@Usage(order = 10, title = "Primary display commands", //
-	text = "+hello - print text following the +")
+	text = "+hello - display text following the +")
 	public static class Text extends Show2Command {
 		private static final Pattern _Pattern = Pattern.compile("[+](.*)");
 
@@ -466,7 +466,7 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 52, text = "-dDmsN - set the inter-command delay (default N=100 millis)")
+	@Usage(order = 52, text = "-dDmsN - set the inter-command delay (default N=120 millis)")
 	public static class DefaultDelayMilliseconds extends Show2Command {
 		private static final Pattern _Pattern = Pattern.compile("-dDms(\\d+)");
 
