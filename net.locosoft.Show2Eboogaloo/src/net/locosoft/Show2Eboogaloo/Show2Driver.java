@@ -26,7 +26,7 @@ public class Show2Driver {
 			commands.read();
 			Show2Session session = new Show2Session(commands);
 			if (session.preprocess())
-				session.eval();
+				session.start();
 		}
 	}
 
@@ -53,7 +53,7 @@ public class Show2Driver {
 		}
 		line("Examples");
 		line("  ./show2.sh +hello fg3 '+ world'");
-		line("  ./show2.sh -T/dev/ttyUSB0 +hello xy4,2 +world'");
+		line("  ./show2.sh -T/dev/ttyUSB0 +hello xy4,2 +world");
 	}
 
 	private static void line(String text) {

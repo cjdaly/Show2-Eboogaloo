@@ -16,53 +16,72 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class Show2Session {
 
-	private Show2Commands _commands;
-
-	// TODO: hold session open for fold channel traffic
-	private boolean _keepAlive = false;
-
-	boolean _echo = false;
-	long _postCommandDelay = 100;
-
-	String _devicePath;
-	String _portOpenPath;
+	public Show2Session() {
+		_keepYourselfAlive = true;
+	}
 
 	public Show2Session(Show2Commands commands) {
-		_commands = commands;
-		_devicePath = "/dev/ttyUSB0";
-		_portOpenPath = System.getProperty("user.home")
-				+ "/ODROID-SHOW/example/linux/port_open";
+		_keepYourselfAlive = false;
+		enqueueCommands(commands);
 	}
 
 	public boolean preprocess() {
-		return _commands.preprocess(this);
+		Show2Commands firstCommands = peekCommands();
+		if (firstCommands != null) {
+			return firstCommands.preprocess(this);
+		} else {
+			return true;
+		}
 	}
 
-	public void eval() throws InterruptedException {
+	public void start() throws InterruptedException {
 		CommandWriter writerThread = new CommandWriter();
 		writerThread.start();
 		writerThread.join();
 	}
 
+	public void stop() {
+		_keepYourselfAlive = false;
+	}
+
+	// session state
+	//
+	private boolean _keepYourselfAlive;
+	int _textWidth = 12;
+	int _textHeight = 16;
+	boolean _echo = false;
+	long _postCommandDelay = 120;
+	String _devicePath = "/dev/ttyUSB0";
+	String _portOpenPath = System.getProperty("user.home")
+			+ "/ODROID-SHOW/example/linux/port_open";
+
 	private class CommandWriter extends Thread {
 		public void run() {
 			try (BufferedWriter writer = new BufferedWriter(new FileWriter(
 					_devicePath, true))) {
-
 				if (_portOpenPath != null) {
 					File portOpenFile = new File(_portOpenPath);
 					if (portOpenFile.exists() && portOpenFile.canExecute()) {
 						Show2Util.execPortOpen(_portOpenPath, _devicePath);
 					}
 				}
-
 				Thread.sleep(2000); // wait for Show2 reset
 
-				_commands.eval(writer, Show2Session.this);
+				Show2Commands commands = dequeueCommands();
+				if (commands != null) {
+					commands.eval(writer, Show2Session.this);
 
+					while (_keepYourselfAlive) {
+						commands = dequeueCommands();
+						if (commands != null) {
+							commands.eval(writer, Show2Session.this);
+						}
+					}
+				}
 			} catch (FileNotFoundException ex) {
 				ex.printStackTrace();
 			} catch (IOException ex) {
@@ -73,4 +92,26 @@ public class Show2Session {
 		}
 	}
 
+	//
+	//
+
+	private LinkedList<Show2Commands> _commandQueue = new LinkedList<Show2Commands>();
+
+	public synchronized void enqueueCommands(Show2Commands commands) {
+		_commandQueue.add(commands);
+	}
+
+	private synchronized Show2Commands dequeueCommands() {
+		if (_commandQueue.isEmpty())
+			return null;
+		else
+			return _commandQueue.removeFirst();
+	}
+
+	private synchronized Show2Commands peekCommands() {
+		if (_commandQueue.isEmpty())
+			return null;
+		else
+			return _commandQueue.getFirst();
+	}
 }

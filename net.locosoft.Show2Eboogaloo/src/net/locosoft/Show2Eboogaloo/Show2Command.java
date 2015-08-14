@@ -102,6 +102,7 @@ public abstract class Show2Command {
 				int chunkEnd = Math.min(i + chunkLength, _text.length());
 				writer.write(_text.substring(i, chunkEnd));
 			}
+			writer.flush();
 		}
 
 		protected String getEchoMessage() {
@@ -122,11 +123,9 @@ public abstract class Show2Command {
 			writer.write(_CHAR_ESCAPE);
 			writer.write("[2J");
 			writer.flush();
+			Thread.sleep(200); // extra pause for thorough window cleaning
 		}
 	}
-
-	//
-	// cursor movement
 
 	public static abstract class HasXY extends Show2Command {
 		public HasXY(Pattern pattern, String command) {
@@ -156,6 +155,36 @@ public abstract class Show2Command {
 		}
 	}
 
+	@Usage(order = 12, text = {//
+	"dotN,N - draw block with background color at character X,Y coordinates" //
+	/* , "DOTN,N - draw dot with foreground color at PIXEL X,Y coordinates" *///
+	})
+	public static class DOT extends HasXY {
+		private static final Pattern _Pattern = Pattern
+				.compile("(dot|DOT)(\\d+),(\\d+)");
+
+		public DOT(String command) {
+			super(_Pattern, command);
+		}
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			if (_altEval) {
+				// TODO: why doesn't this work?
+				writeHelper(writer, session, _x, _y, 'X');
+				writer.flush();
+			} else {
+				writeHelper(writer, session, _x * session._textWidth, _y
+						* session._textHeight, 'H');
+				writer.write(' ');
+				writer.flush();
+			}
+		}
+	}
+
+	//
+	// cursor movement
+
 	@Usage(order = 20, title = "Cursor positioning", text = {
 			"xyN,N - move cursor to character X and Y coordinates",
 			"XYN,N - move cursor to PIXEL X and Y coordinates" })
@@ -171,8 +200,11 @@ public abstract class Show2Command {
 				throws IOException, InterruptedException {
 			if (_altEval) {
 				writeHelper(writer, session, _x, _y, 'H');
+				writer.flush();
 			} else {
-				writeHelper(writer, session, _x * 12, _y * 16, 'H');
+				writeHelper(writer, session, _x * session._textWidth, _y
+						* session._textHeight, 'H');
+				writer.flush();
 			}
 		}
 	}
@@ -201,7 +233,8 @@ public abstract class Show2Command {
 			if (_altEval) {
 				writer.write(Integer.toString(_count));
 			} else {
-				int offset = _key > 'B' ? 12 : 16;
+				int offset = _key > 'B' ? session._textWidth
+						: session._textHeight;
 				writer.write(Integer.toString(_count * offset));
 			}
 			writer.write(_key);
@@ -299,6 +332,87 @@ public abstract class Show2Command {
 			writer.write(_bg);
 			writer.write("m");
 			writer.flush();
+		}
+	}
+
+	@Usage(order = 40, title = "Screen control", text = "rotN - set screen orientation (N=0-3)")
+	public static class ROT extends Show2Command {
+		private static final Pattern _Pattern = Pattern.compile("rot([0-3])");
+
+		public ROT(String command) {
+			super(_Pattern, command);
+		}
+
+		protected boolean readParams(Matcher matcher) {
+			_rot = matcher.group(1).charAt(0);
+			return true;
+		}
+
+		private char _rot;
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			writer.write(_CHAR_ESCAPE);
+			writer.write("[");
+			writer.write(_rot);
+			writer.write("r");
+			writer.flush();
+			Thread.sleep(200);
+		}
+	}
+
+	@Usage(order = 41, text = "bltN - set backlight intensity (N=0-255)")
+	public static class BLT extends Show2Command {
+		private static final Pattern _Pattern = Pattern.compile("blt(\\d+)");
+
+		public BLT(String command) {
+			super(_Pattern, command);
+		}
+
+		protected boolean readParams(Matcher matcher) {
+			_blt = getValue(matcher.group(1), 1);
+			return true;
+		}
+
+		private int _blt;
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			writer.write(_CHAR_ESCAPE);
+			writer.write("[");
+			writer.write(Integer.toString(_blt));
+			writer.write("q");
+			writer.flush();
+			Thread.sleep(200);
+		}
+	}
+
+	@Usage(order = 42, text = "sizN - set text size (N=2-9)")
+	public static class SIZ extends Show2Command {
+		private static final Pattern _Pattern = Pattern.compile("siz([2-9])");
+
+		public SIZ(String command) {
+			super(_Pattern, command);
+		}
+
+		protected boolean readParams(Matcher matcher) {
+			_siz = matcher.group(1).charAt(0);
+			return true;
+		}
+
+		private char _siz;
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			writer.write(_CHAR_ESCAPE);
+			writer.write("[");
+			writer.write(_siz);
+			writer.write("s");
+			writer.flush();
+			Thread.sleep(100);
+
+			session._textWidth = 6 * (_siz - '0');
+			session._textHeight = 8 * (_siz - '0');
 		}
 	}
 
@@ -489,7 +603,7 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				line("Show2-EBoogaloo version 0.1.0.2 for ODROID-SHOW v1.6");
+				line("Show2-EBoogaloo version 0.1.0.3 for ODROID-SHOW v1.6");
 			}
 		}
 
@@ -539,6 +653,9 @@ public abstract class Show2Command {
 			switch (command.substring(0, 2)) {
 			case "cl":
 				return new Show2Command.CLS(command);
+			case "do":
+			case "DO":
+				return new Show2Command.DOT(command);
 			case "up":
 			case "UP":
 				return new Show2Command.UP(command);
@@ -558,6 +675,12 @@ public abstract class Show2Command {
 				return new Show2Command.FG(command);
 			case "bg":
 				return new Show2Command.BG(command);
+			case "ro":
+				return new Show2Command.ROT(command);
+			case "bl":
+				return new Show2Command.BLT(command);
+			case "si":
+				return new Show2Command.SIZ(command);
 			default:
 				return null;
 			}
