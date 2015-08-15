@@ -75,7 +75,7 @@
 		</copy>
 	</target>
 
-	<target name="Show2-sketch.build" depends="init,Show2-sketch.setup">
+	<target name="Show2-sketch.build" depends="init,get-ODROID-SHOW,Show2-sketch.setup">
 		<exec executable="ino" dir="${show_main.dir}" failonerror="true">
 			<arg value="build" />
 		</exec>
