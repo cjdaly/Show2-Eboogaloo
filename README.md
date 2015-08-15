@@ -75,7 +75,7 @@ Later, if you need to make changes to the Arduino sketch, the quick-and-dirty co
     ino build
     ino upload -p /dev/ttyUSB0
 
-Depending on the orientation of your Show2, it may make sense to switch the default text rotation setting in the firmware sketch.  To do this, edit the file (`.../show_main/src/show_main.ino`) and look for this line:
+Depending on the orientation of your Show2, it may make sense to switch the default text rotation setting in the firmware sketch.  To do this, edit the sketch file (`.../show_main/src/show_main.ino`) and look for this line:
 
     uint8_t rotation = 1;
 
