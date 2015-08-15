@@ -61,9 +61,14 @@ Note in this example how quotes are needed for the final argument, because it co
 
 When the Show2 resets, the message `Hello ODROID-SHOW!` is briefly displayed along with a version.  If the version says **`v1.6`**, then great! (That is the same version I am currently running.)
 
-The `setup.xml` script clones the hardkernel [ODROID-SHOW](https://github.com/hardkernel/ODROID-SHOW) repo to the home directory and does a `git checkout` to the version mentioned above.  Inside the `ODROID-SHOW` repo is the Arduino sketch (`~/ODROID-SHOW/show_main/show_main.ino`) that serves as the Show2 firmware.  The `setup.xml` script copies this into an [Ino](http://inotool.org/) project structure in the `Show2-Eboogaloo` project.
+The `setup.xml` script clones the hardkernel [ODROID-SHOW](https://github.com/hardkernel/ODROID-SHOW) repo to the home directory and does a `git checkout` to the version mentioned above.  Inside the `ODROID-SHOW` repo is the Arduino sketch (`~/ODROID-SHOW/show_main/show_main.ino`) that serves as the Show2 firmware.
 
-Rebuilding and uploading the `ODROID-SHOW` firmware may require additional configuration steps, but assuming everything is setup correctly, the following will do it:
+The `setup.xml` script can copy the Arduino sketch into an [Ino](http://inotool.org/) project structure in the `Show2-Eboogaloo` project and build it using the Arduino tool chain. To do this:
+
+    cd ~/Show2-Eboogaloo/Show2-Eboogaloo-SETUP
+    ant -f setup.xml Show2-sketch.build
+
+Later, if you need to make changes to the Arduino sketch, the quick-and-dirty command line way to rebuild and deploy goes like this:
 
     cd ~/Show2-Eboogaloo/Show2-Eboogaloo-SETUP/show_main
     ino clean
