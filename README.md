@@ -57,6 +57,25 @@ Note in this example how quotes are needed for the final argument, because it co
 
     ./show2.sh -T/dev/ttyUSB1 +hello fg3 '+ world'
 
+### Arduino action
+
+When the Show2 resets, the message `Hello ODROID-SHOW!` is briefly displayed along with a version.  If the version says **`v1.6`**, then great! (That is the same version I am currently running.)
+
+The `setup.xml` script clones the hardkernel [ODROID-SHOW](https://github.com/hardkernel/ODROID-SHOW) repo to the home directory and does a `git checkout` to the version mentioned above.  Inside the `ODROID-SHOW` repo is the Arduino sketch (`~/ODROID-SHOW/show_main/show_main.ino`) that serves as the Show2 firmware.  The `setup.xml` script copies this into an [Ino](http://inotool.org/) project structure in the `Show2-Eboogaloo` project.  Assuming the build was successful, the following will upload the `ODROID-SHOW` firmware to the Show2:
+
+    cd ~/Show2-Eboogaloo/Show2-Eboogaloo-SETUP/show_main
+    ino upload -p /dev/ttyUSB0
+
+Depending on the orientation of your Show2, it may make sense to switch the default text rotation setting in the firmware sketch.  To do this, edit the file (look in `.../show_main/src`) and look for this line:
+
+    uint8_t rotation = 1;
+
+Valid values are `0-3`.  Change to a different value and then do the following (from the  `show_main` dir) to rebuild and upload the sketch:
+
+    ino clean
+    ino build
+    ino upload -p /dev/ttyUSB0
+
 ### fold extension channel
 
 _coming soon..._
