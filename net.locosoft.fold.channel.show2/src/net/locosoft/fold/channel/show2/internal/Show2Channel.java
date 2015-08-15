@@ -11,6 +11,7 @@
 
 package net.locosoft.fold.channel.show2.internal;
 
+import net.locosoft.Show2Eboogaloo.Show2Session;
 import net.locosoft.fold.channel.AbstractChannel;
 import net.locosoft.fold.channel.IChannel;
 import net.locosoft.fold.channel.show2.IShow2Channel;
@@ -21,7 +22,26 @@ public class Show2Channel extends AbstractChannel implements IShow2Channel {
 		return IShow2Channel.class;
 	}
 
+	private Show2Session _session;
+	private Show2Feeder _feeder;
+
 	public void init() {
-		System.out.println("in Show2Channel.init()");
+		try {
+			_session = new Show2Session();
+			_session.start(false);
+			_feeder = new Show2Feeder(this, _session);
+			_feeder.start();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void fini() {
+		if (_feeder != null) {
+			_feeder.stop();
+		}
+		if (_session != null) {
+			_session.stop();
+		}
 	}
 }

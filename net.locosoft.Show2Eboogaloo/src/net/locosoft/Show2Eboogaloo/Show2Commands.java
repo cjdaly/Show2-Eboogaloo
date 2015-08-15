@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class Show2Commands {
 
-	public Show2Commands(String[] commands) {
+	public Show2Commands(String... commands) {
 		addCommands(commands);
 	}
 
@@ -40,22 +40,23 @@ public class Show2Commands {
 		}
 	}
 
-	public Show2Commands() {
+	public void addCommands(String... commands) {
+		for (String command : commands) {
+			addCommand(command);
+		}
 	}
 
 	public void addCommand(String command) {
+		if (_readDone) {
+			throw new IllegalStateException();
+		}
+
 		Show2Command show2Command = Show2Command.loadCommand(command);
 		if (show2Command == null) {
 			System.out.println("Invalid command: " + command);
 			_invalidCommandCount++;
 		} else {
 			_commands.add(show2Command);
-		}
-	}
-
-	public void addCommands(String[] commands) {
-		for (String command : commands) {
-			addCommand(command);
 		}
 	}
 
@@ -80,10 +81,15 @@ public class Show2Commands {
 		return foundSessionCommand;
 	}
 
+	private boolean _readDone = false;
+
 	void read() {
-		for (Show2Command command : _commands) {
-			if (!command.read())
-				_malformedCommandCount++;
+		if (!_readDone) {
+			for (Show2Command command : _commands) {
+				if (!command.read())
+					_malformedCommandCount++;
+			}
+			_readDone = true;
 		}
 	}
 
