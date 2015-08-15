@@ -68,7 +68,7 @@ The `setup.xml` script can copy the Arduino sketch into an [Ino](http://inotool.
     cd ~/Show2-Eboogaloo/Show2-Eboogaloo-SETUP
     ant -f setup.xml Show2-sketch.build
 
-Later, if you need to make changes to the Arduino sketch, the quick-and-dirty command line way to rebuild and deploy goes like this:
+If you need to make changes to the Arduino sketch, the quick-and-dirty command line way to rebuild and deploy goes like this:
 
     cd ~/Show2-Eboogaloo/Show2-Eboogaloo-SETUP/show_main
     ino clean
