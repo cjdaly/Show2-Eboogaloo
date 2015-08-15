@@ -19,7 +19,7 @@ So does the MicroView suck? Not at all! The MicroView is a very well designed an
 <tr><td></td><td><b>96</b></td><td></td><td></td><td><b>11</b></td></tr>
 </table>
 
-(_Scoring system approved by her Majesty's royal auditors at Top Gear BBC._)
+(_Scoring system approved by Her Majesty's royal auditors at Top Gear BBC._)
 
 How do I express my love for the Show2? Read on ... (safe for work!) ...
 
