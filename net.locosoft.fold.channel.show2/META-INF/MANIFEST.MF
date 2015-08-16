@@ -5,5 +5,6 @@ Bundle-SymbolicName: net.locosoft.fold.channel.show2;singleton:=true
 Bundle-Version: 0.1.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: net.locosoft.fold.required,
+ net.locosoft.fold.channel.fold,
  net.locosoft.Show2Eboogaloo
 Export-Package: net.locosoft.fold.channel.show2

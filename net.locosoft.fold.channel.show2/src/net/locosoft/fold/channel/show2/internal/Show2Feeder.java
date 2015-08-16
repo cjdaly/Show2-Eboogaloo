@@ -13,6 +13,7 @@ package net.locosoft.fold.channel.show2.internal;
 
 import net.locosoft.Show2Eboogaloo.Show2Commands;
 import net.locosoft.Show2Eboogaloo.Show2Session;
+import net.locosoft.fold.channel.fold.IFoldChannel;
 import net.locosoft.fold.util.FoldUtil;
 import net.locosoft.fold.util.MonitorThread;
 
@@ -31,13 +32,16 @@ public class Show2Feeder extends MonitorThread {
 	}
 
 	protected long getSleepTimePostCycle() {
-		return 2500;
+		return 1500;
 	}
 
 	private String _thingName;
 	private String _foldUrlFragment;
-	private int _count = 0;
+	private long _startCount = -1;
+	private int _cycleCount = 0;
 	private FoldBanner _foldBanner = new FoldBanner();
+
+	private boolean _restart = true;
 
 	public boolean cycle() throws Exception {
 
@@ -51,11 +55,39 @@ public class Show2Feeder extends MonitorThread {
 				_foldUrlFragment = foldUrls[0].substring(7);
 			}
 		}
+		if (_startCount == -1) {
+			IFoldChannel foldChannel = _channel.getChannelService().getChannel(
+					IFoldChannel.class);
+			_startCount = foldChannel.getStartCount();
+		}
 
-		_count++;
+		boolean restarted = false;
+		if (_restart) {
+			Show2Commands commands = new Show2Commands();
+			commands.addCommand("cls");
+			commands.addCommand("blt120");
+			_session.enqueueCommands(commands);
+			_restart = false;
+			restarted = true;
+			_cycleCount++;
+		}
 
-		_session.enqueueCommands(_foldBanner.step());
+		Show2Commands foldBannerCommands = _foldBanner.step();
+		if (foldBannerCommands == null) {
+			_foldBanner.reset();
+			_restart = true;
+		} else {
+			_session.enqueueCommands(foldBannerCommands);
+			if (restarted) {
+				updateStats();
+				updateUrl();
+			}
+		}
 
+		return true;
+	}
+
+	private void updateStats() {
 		Show2Commands commands = new Show2Commands();
 
 		commands.addCommand("siz3");
@@ -67,30 +99,36 @@ public class Show2Feeder extends MonitorThread {
 
 		commands.addCommand("xy0,3");
 		commands.addCommand("fg6");
+		commands.addCommand("+start: ");
+		commands.addCommand("fg3");
+		commands.addCommand("+" + _startCount);
+
+		commands.addCommand("xy0,4");
+		commands.addCommand("fg6");
 		commands.addCommand("+cycle: ");
 		commands.addCommand("fg3");
-		commands.addCommand("+" + _count);
+		commands.addCommand("+" + _cycleCount);
+
+		_session.enqueueCommands(commands);
+	}
+
+	private void updateUrl() {
+		Show2Commands commands = new Show2Commands();
 
 		commands.addCommand("siz2");
 		commands.addCommand("xy0,13");
-		if (_count % 8 == 0) {
-			commands.addCommand("fg3");
-		} else {
-			commands.addCommand("fg7");
-		}
+		commands.addCommand("fg7");
 		commands.addCommand("+http://");
 		commands.addCommand("xy0,14");
 		commands.addCommand("+" + _foldUrlFragment);
 
 		_session.enqueueCommands(commands);
-
-		return true;
 	}
 
 	private class FoldBanner {
 		private Show2Commands[] _commandSequence = { //
 		//
-				s2c("cls", "blt64", "fg2", "+fold         "), //
+				s2c("fg2", "+fold         "), //
 				s2c("fg7", "+{", "fg2", "+fold        "), //
 				s2c("fg7", "+-{", "fg2", "+fold       "), //
 				s2c("fg7", "+--{", "fg2", "+fold      "), //
@@ -99,6 +137,8 @@ public class Show2Feeder extends MonitorThread {
 				s2c("fg7", "+{  ", "fg2", "+   fold   "), //
 				s2c("fg2", "+       fold", "fg7", "+ }"), //
 				s2c("fg2", "+        fold", "fg7", "+}"), //
+				s2c("fg2", "+         fold"), //
+				s2c("fg0", "+         ", "bg2", "+fold"), //
 				s2c("fg2", "+         fold"), //
 				s2c("fg2", "+        fold", "fg7", "+}"), //
 				s2c("fg2", "+       fold", "fg7", "+}-"), //
@@ -110,6 +150,7 @@ public class Show2Feeder extends MonitorThread {
 				s2c("fg7", "+{", "fg2", "+fold        "), //
 				s2c("fg2", "+fold         "), //
 				s2c("bg2", "fg0", "+fold", "bg0", "+         "), //
+				s2c("bg2", "fg4", "+fold", "bg0", "+         "), //
 				s2c("fg2", "+fold         "), //
 		};
 
@@ -121,11 +162,15 @@ public class Show2Feeder extends MonitorThread {
 			return s2c;
 		}
 
+		void reset() {
+			_step = 0;
+		}
+
 		Show2Commands step() {
-			Show2Commands commands = _commandSequence[_step++];
 			if (_step == _commandSequence.length)
-				_step = 0;
-			return commands;
+				return null;
+			else
+				return _commandSequence[_step++];
 		}
 	}
 
