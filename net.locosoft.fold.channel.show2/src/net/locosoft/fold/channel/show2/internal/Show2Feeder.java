@@ -66,7 +66,7 @@ public class Show2Feeder extends MonitorThread {
 		if (_restart) {
 			Show2Commands commands = new Show2Commands();
 			commands.addCommand("cls");
-			commands.addCommand("blt120");
+			commands.addCommand("blt64");
 			_session.enqueueCommands(commands);
 			_restart = false;
 			restarted = true;
@@ -80,7 +80,10 @@ public class Show2Feeder extends MonitorThread {
 		} else {
 			_session.enqueueCommands(foldBannerCommands);
 			if (restarted) {
+				updateMiniBanner1();
 				updateStats();
+				updateEvents();
+				updateMiniBanner2();
 				updateUrl();
 			}
 		}
@@ -88,11 +91,36 @@ public class Show2Feeder extends MonitorThread {
 		return true;
 	}
 
+	private void updateMiniBanner1() {
+		Show2Commands commands = new Show2Commands();
+
+		commands.addCommand("siz2");
+		commands.addCommand("xy0,2");
+		commands.addCommand("bg0");
+		commands.addCommand("fg4");
+		commands.addCommand("+--------------------------");
+
+		_session.enqueueCommands(commands);
+	}
+
+	private void updateMiniBanner2() {
+		Show2Commands commands = new Show2Commands();
+
+		commands.addCommand("siz2");
+		commands.addCommand("xy0,12");
+		commands.addCommand("bg0");
+		commands.addCommand("fg4");
+		commands.addCommand("+--------------------------");
+
+		_session.enqueueCommands(commands);
+	}
+
 	private void updateStats() {
 		Show2Commands commands = new Show2Commands();
 
 		commands.addCommand("siz3");
 		commands.addCommand("xy0,2");
+		commands.addCommand("bg0");
 		commands.addCommand("fg6");
 		commands.addCommand("+Thing: ");
 		commands.addCommand("fg3");
@@ -113,11 +141,33 @@ public class Show2Feeder extends MonitorThread {
 		_session.enqueueCommands(commands);
 	}
 
+	private void updateEvents() {
+		Show2Commands commands = new Show2Commands();
+
+		commands.addCommand("siz3");
+		commands.addCommand("xy6,5");
+		commands.addCommand("bg4");
+		commands.addCommand("fg6");
+		commands.addCommand("+Event");
+
+		commands.addCommand("xy0,6");
+		commands.addCommand("bg0");
+		commands.addCommand("fg5");
+		commands.addCommand("+stuff");
+
+		commands.addCommand("xy0,7");
+		commands.addCommand("fg5");
+		commands.addCommand("+stuff");
+
+		_session.enqueueCommands(commands);
+	}
+
 	private void updateUrl() {
 		Show2Commands commands = new Show2Commands();
 
 		commands.addCommand("siz2");
 		commands.addCommand("xy0,13");
+		commands.addCommand("bg0");
 		commands.addCommand("fg7");
 		commands.addCommand("+http://");
 		commands.addCommand("xy0,14");
