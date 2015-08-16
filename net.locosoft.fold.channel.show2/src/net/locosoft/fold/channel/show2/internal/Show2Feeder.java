@@ -45,7 +45,8 @@ public class Show2Feeder extends MonitorThread {
 
 	public boolean cycle() throws Exception {
 
-		if (_thingName == null) {
+		while (_thingName == null) { // wait for ThingChannel init
+			Thread.sleep(500);
 			_thingName = _channel.getChannelService().getChannelData("thing",
 					"name");
 		}
