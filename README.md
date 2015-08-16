@@ -79,7 +79,7 @@ Depending on the orientation of your Show2, it may make sense to switch the defa
 
     uint8_t rotation = 1;
 
-Valid values are `0-3`.  Change to a different value and then repeat the `clean`, `build`, `upload` sequence described above.
+Valid values are `0-3`.  Change to a different value and then repeat the Ino `clean`, `build`, `upload` sequence described above.
 
 ### fold extension channel
 
