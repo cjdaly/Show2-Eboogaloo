@@ -55,8 +55,10 @@ public class Show2Session {
 	private boolean _keepYourselfAlive;
 	int _textWidth = 12;
 	int _textHeight = 16;
+	int _textSize = 2;
+	int _screenRotation = 1;
 	boolean _echo = false;
-	long _postCommandDelay = 120;
+	long _postCommandDelay = 100;
 	String _devicePath = "/dev/ttyUSB0";
 	String _portOpenPath = System.getProperty("user.home")
 			+ "/ODROID-SHOW/example/linux/port_open";

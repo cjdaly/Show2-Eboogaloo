@@ -18,6 +18,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,7 +79,7 @@ public abstract class Show2Command {
 	@Usage(order = 10, title = "Primary display commands", //
 	text = "+hello - display text following the +")
 	public static class Text extends Show2Command {
-		private static final Pattern _Pattern = Pattern.compile("[+](.*)");
+		private static final Pattern _Pattern = Pattern.compile("[+](.+)");
 
 		public Text(String command) {
 			super(_Pattern, command);
@@ -110,7 +111,91 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 11, text = "cls - clear screen; reposition cursor to 0,0")
+	@Usage(order = 11, text = {
+			"/N/text - display text on line N; pad with spaces to end of line",
+			"/Nr/text - display text on line N, right justified",
+			"/N,N/text - display text at char X,Y coordinates; pad with spaces to EOL" })
+	public static class Textra extends Show2Command {
+		private static final Pattern _Pattern = Pattern
+				.compile("/(\\d+)(,(\\d+))?(r)?/(.+)");
+
+		public Textra(String command) {
+			super(_Pattern, command);
+		}
+
+		protected boolean readParams(Matcher matcher) {
+			int first = getValue(matcher.group(1), 0);
+			int second = getValue(matcher.group(3), -1);
+			if (second == -1) {
+				_x = 0;
+				_y = first;
+			} else {
+				_x = first;
+				_y = second;
+			}
+			_rightJustify = "r".equals(matcher.group(4)) && (second == -1);
+			_text = matcher.group(5);
+			return true;
+		}
+
+		private int _x;
+		private int _y;
+		private boolean _rightJustify;
+		private String _text;
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			int lineLength = getLineLength(session);
+			if (_x >= lineLength)
+				return;
+
+			Show2Commands commands = new Show2Commands();
+
+			if (_rightJustify) {
+				int x = lineLength - _text.length();
+				commands.addCommand("xy" + x + "," + _y);
+				commands.addCommand("+" + _text);
+			} else {
+				int textEnd = _x + _text.length();
+				String text = _text;
+				String pad = "";
+				if (textEnd >= lineLength) {
+					text = _text.substring(0, lineLength - _x);
+				} else {
+					char[] spaces = new char[lineLength - textEnd];
+					Arrays.fill(spaces, ' ');
+					pad = new String(spaces);
+				}
+
+				commands.addCommand("xy" + _x + "," + _y);
+				commands.addCommand("+" + text);
+				if (!pad.isEmpty()) {
+					commands.addCommand("+" + pad);
+				}
+			}
+
+			commands.read();
+			commands.eval(writer, session);
+		}
+
+		private int getLineLength(Show2Session session) {
+			switch (session._screenRotation) {
+			case 0:
+			case 2:
+				return 200 / session._textWidth;
+			case 1:
+			case 3:
+			default:
+				return 320 / session._textWidth;
+			}
+		}
+
+		protected String getEchoMessage() {
+			return "'" + _text + "'";
+		}
+	}
+
+	@Usage(order = 12, text = "cls - clear screen; reposition cursor to 0,0")
 	public static class CLS extends Show2Command {
 		private static final Pattern _Pattern = Pattern.compile("cls");
 
@@ -155,7 +240,7 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 12, text = {//
+	@Usage(order = 13, text = {//
 	"dotN,N - draw block with background color at character X,Y coordinates" //
 	/* , "DOTN,N - draw dot with foreground color at PIXEL X,Y coordinates" *///
 	})
@@ -186,8 +271,8 @@ public abstract class Show2Command {
 	// cursor movement
 
 	@Usage(order = 20, title = "Cursor positioning", text = {
-			"xyN,N - move cursor to character X and Y coordinates",
-			"XYN,N - move cursor to PIXEL X and Y coordinates" })
+			"xyN,N - move cursor to character X,Y coordinates",
+			"XYN,N - move cursor to PIXEL X,Y coordinates" })
 	public static class XY extends HasXY {
 		private static final Pattern _Pattern = Pattern
 				.compile("(xy|XY)(\\d+),(\\d+)");
@@ -242,7 +327,7 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 21, text = "up[N] / UP[N] - cursor up by N chars/PIXELs (default N=1)")
+	@Usage(order = 21, text = "up[N] or UP[N] - cursor up by N chars/PIXELs (default N=1)")
 	public static class UP extends CursorMove {
 		private static final Pattern _Pattern = Pattern
 				.compile("(up|UP)(\\d*)");
@@ -252,7 +337,7 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 22, text = "dn[N] / DN[N] - cursor down by N chars/PIXELs")
+	@Usage(order = 22, text = "dn[N] or DN[N] - cursor down by N chars/PIXELs")
 	public static class DN extends CursorMove {
 		private static final Pattern _Pattern = Pattern
 				.compile("(dn|DN)(\\d*)");
@@ -262,7 +347,7 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 23, text = "rt[N] / RT[N] - cursor right by N chars/PIXELs")
+	@Usage(order = 23, text = "rt[N] or RT[N] - cursor right by N chars/PIXELs")
 	public static class RT extends CursorMove {
 		private static final Pattern _Pattern = Pattern
 				.compile("(rt|RT)(\\d*)");
@@ -272,7 +357,7 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 24, text = "lt[N] / LT[N] - cursor left by N chars/PIXELs")
+	@Usage(order = 24, text = "lt[N] or LT[N] - cursor left by N chars/PIXELs")
 	public static class LT extends CursorMove {
 		private static final Pattern _Pattern = Pattern
 				.compile("(lt|LT)(\\d*)");
@@ -358,6 +443,7 @@ public abstract class Show2Command {
 			writer.write("r");
 			writer.flush();
 			Thread.sleep(200);
+			session._screenRotation = _rot - '0';
 		}
 	}
 
@@ -413,6 +499,7 @@ public abstract class Show2Command {
 
 			session._textWidth = 6 * (_siz - '0');
 			session._textHeight = 8 * (_siz - '0');
+			session._textSize = (_siz - '0');
 		}
 	}
 
@@ -466,7 +553,7 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 52, text = "-dDmsN - set the inter-command delay (default N=120 millis)")
+	@Usage(order = 52, text = "-dDmsN - set the inter-command delay (default N=100 millis)")
 	public static class DefaultDelayMilliseconds extends Show2Command {
 		private static final Pattern _Pattern = Pattern.compile("-dDms(\\d+)");
 
@@ -475,7 +562,7 @@ public abstract class Show2Command {
 		}
 
 		protected boolean readParams(Matcher matcher) {
-			_delay = getValue(matcher.group(1), 500);
+			_delay = getValue(matcher.group(1), 100);
 			return true;
 		}
 
@@ -603,7 +690,7 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				line("Show2-EBoogaloo version 0.1.0.4 for ODROID-SHOW v1.6");
+				line("Show2-EBoogaloo version 0.1.0.5 for ODROID-SHOW v1.6");
 			}
 		}
 
@@ -623,6 +710,8 @@ public abstract class Show2Command {
 		char c1 = command.charAt(0);
 		if (c1 == '+') {
 			return new Show2Command.Text(command);
+		} else if (c1 == '/') {
+			return new Show2Command.Textra(command);
 		} else if (c1 == '-') {
 			if (command.length() < 3)
 				return null;
