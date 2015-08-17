@@ -11,9 +11,16 @@
 
 package net.locosoft.fold.channel.show2.internal;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.eclipsesource.json.JsonObject;
+
 import net.locosoft.Show2Eboogaloo.Show2Commands;
 import net.locosoft.Show2Eboogaloo.Show2Session;
+import net.locosoft.fold.channel.chatter.IChatterChannel;
 import net.locosoft.fold.channel.fold.IFoldChannel;
+import net.locosoft.fold.channel.vitals.IVitalsChannel;
 import net.locosoft.fold.util.FoldUtil;
 import net.locosoft.fold.util.MonitorThread;
 
@@ -22,9 +29,17 @@ public class Show2Feeder extends MonitorThread {
 	private Show2Channel _channel;
 	private Show2Session _session;
 
+	private IChatterChannel _chatterChannel;
+	private IVitalsChannel _vitalsChannel;
+
 	public Show2Feeder(Show2Channel channel, Show2Session session) {
 		_channel = channel;
 		_session = session;
+
+		_chatterChannel = _channel.getChannelService().getChannel(
+				IChatterChannel.class);
+		_vitalsChannel = _channel.getChannelService().getChannel(
+				IVitalsChannel.class);
 	}
 
 	protected long getSleepTimePreCycle() {
@@ -39,6 +54,7 @@ public class Show2Feeder extends MonitorThread {
 	private String _foldUrlFragment;
 	private long _startCount = -1;
 	private int _cycleCount = 0;
+	private int _epicycleCount = 0;
 	private FoldBanner _foldBanner = new FoldBanner();
 
 	private boolean _restart = true;
@@ -71,6 +87,9 @@ public class Show2Feeder extends MonitorThread {
 			_restart = false;
 			restarted = true;
 			_cycleCount++;
+			_epicycleCount = 0;
+		} else {
+			_epicycleCount++;
 		}
 
 		Show2Commands foldBannerCommands = _foldBanner.step();
@@ -82,7 +101,13 @@ public class Show2Feeder extends MonitorThread {
 			if (restarted) {
 				updateMiniBanner1();
 				updateStats();
+			}
+
+			if (_epicycleCount % 6 == 0) {
 				updateEvents();
+			}
+
+			if (restarted) {
 				updateMiniBanner2();
 				updateUrl();
 			}
@@ -142,22 +167,66 @@ public class Show2Feeder extends MonitorThread {
 	}
 
 	private void updateEvents() {
+
 		Show2Commands commands = new Show2Commands();
 
-		commands.addCommand("siz3");
-		commands.addCommand("xy6,5");
-		commands.addCommand("bg4");
-		commands.addCommand("fg6");
-		commands.addCommand("+Event");
+		switch (_epicycleCount / 6) {
+		case 1: // vitals
+		case 3: // vitals
+			commands.addCommand("siz3");
+			commands.addCommand("xy0,5");
+			commands.addCommand("bg0");
+			commands.addCommand("fg4");
+			commands.addCommand("+--/");
+			commands.addCommand("fg6");
+			commands.addCommand("/3,5/Vitals");
+			commands.addCommand("fg5");
+			long vitalsItemNum = _vitalsChannel.getLatestVitalsOrdinal();
+			commands.addCommand("/5r/" + vitalsItemNum);
+			commands.addCommand("fg3");
+			commands.addCommand("/6/...");
+			commands.addCommand("/7/...");
+			break;
+		case 2: // chatter
+			commands.addCommand("siz3");
+			commands.addCommand("xy0,5");
+			commands.addCommand("bg0");
+			commands.addCommand("fg4");
+			commands.addCommand("+--/");
+			commands.addCommand("fg6");
+			commands.addCommand("/3,5/Chatter");
+			long chatterItemNum = _chatterChannel.getLatestChatterOrdinal();
+			commands.addCommand("fg5");
+			commands.addCommand("/5r/" + chatterItemNum);
+			JsonObject chatterItem = _chatterChannel
+					.getChatterItem(chatterItemNum);
+			commands.addCommand("fg3");
+			commands.addCommand("/6/"
+					+ chatterItem.getString("Chatter_category", "?"));
+			commands.addCommand("/7/"
+					+ chatterItem.getString("Chatter_message", "?"));
+			break;
+		default: // time
+			commands.addCommand("siz3");
+			commands.addCommand("xy0,5");
+			commands.addCommand("bg0");
+			commands.addCommand("fg4");
+			commands.addCommand("+--/");
+			commands.addCommand("fg6");
+			commands.addCommand("/3,5/Time");
 
-		commands.addCommand("xy0,6");
-		commands.addCommand("bg0");
-		commands.addCommand("fg5");
-		commands.addCommand("+stuff");
+			Date now = new Date();
+			SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a, EEE");
+			String time = timeFormat.format(now);
+			commands.addCommand("fg3");
+			commands.addCommand("/6/ " + time);
 
-		commands.addCommand("xy0,7");
-		commands.addCommand("fg5");
-		commands.addCommand("+stuff");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+			String date = dateFormat.format(now);
+			commands.addCommand("/7/ " + date);
+
+			break;
+		}
 
 		_session.enqueueCommands(commands);
 	}

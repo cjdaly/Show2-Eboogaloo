@@ -595,7 +595,8 @@ public abstract class Show2Command {
 				throws IOException, InterruptedException {
 			File commandFile = new File(_path);
 			if (commandFile.exists() && commandFile.canRead()) {
-				Show2Commands commands = new Show2Commands(_path);
+				Show2Commands commands = new Show2Commands();
+				commands.addCommandsFromFile(_path);
 				commands.read();
 				commands.eval(writer, session);
 			}
@@ -658,7 +659,7 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 72, text = "-echoN - echo on (N=1) or off (N=0)")
+	@Usage(order = 72, text = "-echoN - echo on (N=1), or off (N=0)")
 	public static class Echo extends Show2Command {
 		private static final Pattern _Pattern = Pattern.compile("-echo(\\d)");
 
@@ -690,7 +691,7 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				line("Show2-EBoogaloo version 0.1.0.5 for ODROID-SHOW v1.6");
+				line("Show2-EBoogaloo version 0.1.0.6 for ODROID-SHOW v1.6");
 			}
 		}
 

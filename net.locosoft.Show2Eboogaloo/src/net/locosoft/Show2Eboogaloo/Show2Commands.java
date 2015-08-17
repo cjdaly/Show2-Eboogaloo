@@ -24,8 +24,8 @@ public class Show2Commands {
 		addCommands(commands);
 	}
 
-	public Show2Commands(String commandFilePath) throws FileNotFoundException,
-			IOException {
+	public void addCommandsFromFile(String commandFilePath)
+			throws FileNotFoundException, IOException {
 		try (BufferedReader reader = new BufferedReader(new FileReader(
 				commandFilePath))) {
 			String command;
