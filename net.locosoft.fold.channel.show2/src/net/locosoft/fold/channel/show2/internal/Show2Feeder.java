@@ -14,13 +14,16 @@ package net.locosoft.fold.channel.show2.internal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
 
 import net.locosoft.Show2Eboogaloo.Show2Commands;
 import net.locosoft.Show2Eboogaloo.Show2Session;
+import net.locosoft.fold.channel.chatter.ChatterItemDetails;
 import net.locosoft.fold.channel.chatter.IChatterChannel;
 import net.locosoft.fold.channel.fold.IFoldChannel;
 import net.locosoft.fold.channel.vitals.IVitalsChannel;
+import net.locosoft.fold.channel.vitals.Vital;
+import net.locosoft.fold.channel.vitals.VitalsItemDetails;
 import net.locosoft.fold.util.FoldUtil;
 import net.locosoft.fold.util.MonitorThread;
 
@@ -170,48 +173,66 @@ public class Show2Feeder extends MonitorThread {
 
 		Show2Commands commands = new Show2Commands();
 
+		commands.addCommand("siz3");
+		commands.addCommand("xy0,5");
+		commands.addCommand("bg0");
+		commands.addCommand("fg4");
+		commands.addCommand("+--");
+		commands.addCommand("fg5");
+		commands.addCommand("+/");
+
 		switch (_epicycleCount / 6) {
 		case 1: // vitals
 		case 3: // vitals
-			commands.addCommand("siz3");
-			commands.addCommand("xy0,5");
-			commands.addCommand("bg0");
-			commands.addCommand("fg4");
-			commands.addCommand("+--/");
 			commands.addCommand("fg6");
 			commands.addCommand("/3,5/Vitals");
 			commands.addCommand("fg5");
-			long vitalsItemNum = _vitalsChannel.getLatestVitalsOrdinal();
-			commands.addCommand("/5r/" + vitalsItemNum);
-			commands.addCommand("fg3");
-			commands.addCommand("/6/...");
-			commands.addCommand("/7/...");
+
+			VitalsItemDetails vitalsItemDetails = _vitalsChannel
+					.getVitalsItemDetails(-1);
+			if (vitalsItemDetails == null) {
+				commands.addCommand("/5r/???");
+				commands.addCommand("fg3");
+				commands.addCommand("/6/???");
+				commands.addCommand("/7/???");
+			} else {
+				commands.addCommand("/5r/" + vitalsItemDetails.getOrdinal());
+				commands.addCommand("fg3");
+				Vital[] vitals = vitalsItemDetails.getVitals();
+				if (vitals.length > 0) {
+					Vital vital = vitals[0];
+					String name = vital.Name == null ? vital.Id : vital.Name;
+					commands.addCommand("/6/" + name);
+					JsonValue jsonValue = vitalsItemDetails.getValue(vital.Id);
+					commands.addCommand("/7/" + jsonValue.toString());
+					commands.addCommand("fg4");
+					commands.addCommand("/7r/" + vital.Units);
+				} else {
+					commands.addCommand("/6/???");
+					commands.addCommand("/7/???");
+				}
+			}
 			break;
 		case 2: // chatter
-			commands.addCommand("siz3");
-			commands.addCommand("xy0,5");
-			commands.addCommand("bg0");
-			commands.addCommand("fg4");
-			commands.addCommand("+--/");
 			commands.addCommand("fg6");
 			commands.addCommand("/3,5/Chatter");
-			long chatterItemNum = _chatterChannel.getLatestChatterOrdinal();
 			commands.addCommand("fg5");
-			commands.addCommand("/5r/" + chatterItemNum);
-			JsonObject chatterItem = _chatterChannel
-					.getChatterItem(chatterItemNum);
-			commands.addCommand("fg3");
-			commands.addCommand("/6/"
-					+ chatterItem.getString("Chatter_category", "?"));
-			commands.addCommand("/7/"
-					+ chatterItem.getString("Chatter_message", "?"));
+
+			ChatterItemDetails chatterItemDetails = _chatterChannel
+					.getChatterItemDetails(-1);
+			if (chatterItemDetails == null) {
+				commands.addCommand("/5r/???");
+				commands.addCommand("fg3");
+				commands.addCommand("/6/???");
+				commands.addCommand("/7/???");
+			} else {
+				commands.addCommand("/5r/" + chatterItemDetails.getOrdinal());
+				commands.addCommand("fg3");
+				commands.addCommand("/6/" + chatterItemDetails.getCategory());
+				commands.addCommand("/7/" + chatterItemDetails.getMessage());
+			}
 			break;
 		default: // time
-			commands.addCommand("siz3");
-			commands.addCommand("xy0,5");
-			commands.addCommand("bg0");
-			commands.addCommand("fg4");
-			commands.addCommand("+--/");
 			commands.addCommand("fg6");
 			commands.addCommand("/3,5/Time");
 
