@@ -83,7 +83,7 @@ Valid values are `0-3`.  Change to a different value and then repeat the Ino `cl
 
 ### fold extension channel
 
-To use the Show2 with [fold](https://github.com/cjdaly/fold), copy the 2 jars in `~/Show2-Eboogaloo/Show2-Eboogaloo-SETUP/plugins` to the `~/fold-runtime/extend/plugins` directory and then run `./fold.sh extend` from the `fold-runtime` dir before restarting fold.
+To use the Show2 with [fold](https://github.com/cjdaly/fold), copy the 2 jars in `~/Show2-Eboogaloo/Show2-Eboogaloo-SETUP/plugins` to the `~/fold-runtime/extend/plugins` directory and then run `./fold.sh extend` from the `fold-runtime` directory.
 
 ![Hello World](https://github.com/cjdaly/Show2-Eboogaloo/blob/master/images/Show2-fold-channel.jpg?raw=true)
 
