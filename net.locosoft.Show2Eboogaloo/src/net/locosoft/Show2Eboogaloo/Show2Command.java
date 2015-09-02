@@ -691,7 +691,7 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				line("Show2-EBoogaloo version 0.1.0.6 for ODROID-SHOW v1.6");
+				line("Show2-EBoogaloo version 0.1.0.7 for ODROID-SHOW v1.6");
 			}
 		}
 

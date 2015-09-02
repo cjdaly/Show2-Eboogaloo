@@ -20,6 +20,8 @@
 		<property name="ODROID-SHOW.dir" value="${user.home}/ODROID-SHOW" />
 		<available property="ODROID-SHOW.available" file="${ODROID-SHOW.dir}" type="dir" />
 
+		<property name="port_open.dir" value="./port_open" />
+
 		<property name="show_main.ino" value="${ODROID-SHOW.dir}/show_main/show_main.ino" />
 		<property name="show_main.dir" value="./show_main" />
 		<available property="show_main.available" file="${show_main.dir}" type="dir" />
@@ -41,14 +43,17 @@
 	</target>
 
 	<target name="gcc-port_open" depends="get-ODROID-SHOW">
+		<mkdir dir="${port_open.dir}" />
+		<copy file="${ODROID-SHOW.dir}/example/linux/port_open.c" todir="${port_open.dir}" />
+
 		<!-- remove the infinite loop -->
-		<replaceregexp file="${ODROID-SHOW.dir}/example/linux/port_open.c">
+		<replaceregexp file="${port_open.dir}/port_open.c">
 			<regexp pattern="while\(1\)\s*sleep\(\d+\);" />
 			<substitution expression="" />
 		</replaceregexp>
 
-		<delete file="${ODROID-SHOW.dir}/example/linux/port_open" />
-		<exec executable="gcc" dir="${ODROID-SHOW.dir}/example/linux">
+		<delete file="${port_open.dir}/port_open" />
+		<exec executable="gcc" dir="${port_open.dir}">
 			<arg value="-o" />
 			<arg value="port_open" />
 			<arg value="port_open.c" />

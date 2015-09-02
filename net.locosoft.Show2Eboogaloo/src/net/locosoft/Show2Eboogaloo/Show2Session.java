@@ -60,8 +60,9 @@ public class Show2Session {
 	boolean _echo = false;
 	long _postCommandDelay = 100;
 	String _devicePath = "/dev/ttyUSB0";
-	String _portOpenPath = System.getProperty("user.home")
-			+ "/ODROID-SHOW/example/linux/port_open";
+	String _portOpenPath = System
+			.getProperty("net.locosoft.Show2Eboogaloo.homeDir")
+			+ "/Show2-Eboogaloo-SETUP/port_open/port_open";
 
 	private class CommandWriter extends Thread {
 		public void run() {
