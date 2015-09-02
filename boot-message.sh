@@ -21,5 +21,7 @@ echo "found IP addr: $ipAddr"
 
 S2EB_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+`$S2EB_HOME/../ODROID-SHOW/example/linux/port_open`
+
 `$S2EB_HOME/show2.sh fg7 siz4 '+IP Addr:' siz3 fg3 xy0,2 "+$ipAddr" xy0,3 fg4 +----------------- xy0,4 fg2 "$@"`
 
