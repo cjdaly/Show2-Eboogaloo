@@ -49,7 +49,7 @@ And now you should be ready for...
 
 ### normal usage
 
-The top level `Show2-Eboogaloo` directory contains two bash scripts.  The `find-show2-ttys.sh` script will search for connected Show2 devices and print their Linux device file path (e.g. `/dev/ttyUSB0`). The `show2.sh` script controls the Show2 by interpreting a series of command line arguments.  Run `./show2.sh` with no arguments to see a usage message.  To produce an image like in the picture above:
+The top level `Show2-Eboogaloo` directory contains several bash scripts.  The `find-show2-ttys.sh` script will search for connected Show2 devices and print their Linux device file path (e.g. `/dev/ttyUSB0`). The `show2.sh` script controls the Show2 by interpreting a series of command line arguments.  Run `./show2.sh` with no arguments to see a usage message.  To produce an image like in the picture above:
 
     ./show2.sh siz4 fg3 +Hello fg6 '+ world!'
 
