@@ -25,6 +25,11 @@
 		<property name="show_main.ino" value="${ODROID-SHOW.dir}/show_main/show_main.ino" />
 		<property name="show_main.dir" value="./show_main" />
 		<available property="show_main.available" file="${show_main.dir}" type="dir" />
+
+		<property name="weatherThing.dir" value="./weatherThing" />
+		<property name="weatherThing.ino.src" value="${weatherThing.dir}/weatherThing.ino" />
+		<property name="weatherThing.ino.dir" value="${weatherThing.dir}/inoProject" />
+		<available property="weatherThing.available" file="${weatherThing.ino.dir}" type="dir" />
 	</target>
 
 	<target name="get-ODROID-SHOW" depends="get-ODROID-SHOW.repo" />
@@ -82,6 +87,24 @@
 
 	<target name="Show2-sketch.build" depends="init,get-ODROID-SHOW,Show2-sketch.setup">
 		<exec executable="ino" dir="${show_main.dir}" failonerror="true">
+			<arg value="build" />
+		</exec>
+	</target>
+
+	<target name="weatherThing.setup" unless="weatherThing.available">
+		<mkdir dir="${weatherThing.ino.dir}" />
+		<exec executable="ino" dir="${weatherThing.ino.dir}" failonerror="true">
+			<arg value="init" />
+		</exec>
+		<delete file="${weatherThing.ino.dir}/src/sketch.ino" />
+		<copy todir="${weatherThing.ino.dir}/src" file="${weatherThing.ino.src}" />
+		<copy todir="${weatherThing.ino.dir}/lib">
+			<fileset dir="${ODROID-SHOW.dir}/libraries" includes="**" />
+		</copy>
+	</target>
+
+	<target name="weatherThing.build" depends="init,get-ODROID-SHOW,weatherThing.setup">
+		<exec executable="ino" dir="${weatherThing.ino.dir}" failonerror="true">
 			<arg value="build" />
 		</exec>
 	</target>
