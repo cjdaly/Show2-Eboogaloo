@@ -65,7 +65,6 @@ public class Show2Commands {
 		for (Show2Command command : _commands) {
 			if ((command instanceof Show2Command.DevicePath)
 					|| (command instanceof Show2Command.PortOpenPath)
-					|| (command instanceof Show2Command.Echo)
 					|| (command instanceof Show2Command.Version)) {
 				try {
 					command.eval(null, session);
@@ -96,10 +95,6 @@ public class Show2Commands {
 	void eval(BufferedWriter writer, Show2Session session) throws IOException,
 			InterruptedException {
 		for (Show2Command command : _commands) {
-			if (session._echo) {
-				System.out.println(command.getCommand() + "  "
-						+ command.getEchoMessage());
-			}
 			command.eval(writer, session);
 			Thread.sleep(session._postCommandDelay);
 		}

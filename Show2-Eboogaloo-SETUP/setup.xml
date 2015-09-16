@@ -91,6 +91,10 @@
 		</exec>
 	</target>
 
+	<target name="Show2-sketch.clean" depends="init">
+		<delete dir="${show_main.dir}" />
+	</target>
+
 	<target name="weatherThing.setup" unless="weatherThing.available">
 		<mkdir dir="${weatherThing.ino.dir}" />
 		<exec executable="ino" dir="${weatherThing.ino.dir}" failonerror="true">
@@ -107,6 +111,10 @@
 		<exec executable="ino" dir="${weatherThing.ino.dir}" failonerror="true">
 			<arg value="build" />
 		</exec>
+	</target>
+
+	<target name="weatherThing.clean" depends="init">
+		<delete dir="${weatherThing.ino.dir}" />
 	</target>
 
 </project>

@@ -55,10 +55,6 @@ public abstract class Show2Command {
 	public abstract void eval(BufferedWriter writer, Show2Session session)
 			throws IOException, InterruptedException;
 
-	protected String getEchoMessage() {
-		return "";
-	}
-
 	//
 	//
 
@@ -106,9 +102,6 @@ public abstract class Show2Command {
 			writer.flush();
 		}
 
-		protected String getEchoMessage() {
-			return "'" + _text + "'";
-		}
 	}
 
 	@Usage(order = 11, text = {
@@ -190,9 +183,6 @@ public abstract class Show2Command {
 			}
 		}
 
-		protected String getEchoMessage() {
-			return "'" + _text + "'";
-		}
 	}
 
 	@Usage(order = 12, text = "cls - clear screen; reposition cursor to 0,0")
@@ -503,6 +493,34 @@ public abstract class Show2Command {
 		}
 	}
 
+	@Usage(order = 45, text = {
+			"ledR or ledG or ledB - turn ON red, green or blue LED",
+			"ledr or ledg or ledb - turn off red, green or blue LED" })
+	public static class LED extends Show2Command {
+		private static final Pattern _Pattern = Pattern
+				.compile("led([rRgGbB])");
+
+		public LED(String command) {
+			super(_Pattern, command);
+		}
+
+		protected boolean readParams(Matcher matcher) {
+			_led = matcher.group(1).charAt(0);
+			return true;
+		}
+
+		private char _led;
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			writer.write(_CHAR_ESCAPE);
+			writer.write("~");
+			writer.write(_led);
+			writer.flush();
+			Thread.sleep(100);
+		}
+	}
+
 	//
 	// Meta Commands
 	//
@@ -527,9 +545,6 @@ public abstract class Show2Command {
 			Thread.sleep(_delay);
 		}
 
-		protected String getEchoMessage() {
-			return "delay " + _delay + " milliseconds";
-		}
 	}
 
 	@Usage(order = 51, text = "-dmsN - delay N milliseconds")
@@ -659,28 +674,36 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 72, text = "-echoN - echo on (N=1), or off (N=0)")
-	public static class Echo extends Show2Command {
-		private static final Pattern _Pattern = Pattern.compile("-echo(\\d)");
+	@Usage(order = 72, text = "-WB or -wb - WeatherBoard sensor dump ON or off")
+	public static class WeatherBoard extends Show2Command {
+		private static final Pattern _Pattern = Pattern.compile("-(WB|wb)");
 
-		public Echo(String command) {
+		public WeatherBoard(String command) {
 			super(_Pattern, command);
 		}
 
 		protected boolean readParams(Matcher matcher) {
-			_echo = "1".equals(matcher.group(1));
+			_enabled = "WB".equals(matcher.group(1));
 			return true;
 		}
 
-		private boolean _echo;
+		private boolean _enabled;
 
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
-			session._echo = _echo;
+			writer.write(_CHAR_ESCAPE);
+			writer.write("~");
+			if (_enabled) {
+				writer.write('W');
+			} else {
+				writer.write('w');
+			}
+			writer.flush();
+			Thread.sleep(100);
 		}
 	}
 
-	@Usage(order = 73, text = "--v - print version information to stdout")
+	@Usage(order = 74, text = "--v - print version information to stdout")
 	public static class Version extends Show2Command {
 		private static final Pattern _Pattern = Pattern.compile("--v");
 
@@ -691,7 +714,7 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				line("Show2-EBoogaloo version 0.1.0.7 for ODROID-SHOW v1.6");
+				line("Show2-EBoogaloo version 0.1.0.8 for ODROID-SHOW v1.6");
 			}
 		}
 
@@ -732,8 +755,9 @@ public abstract class Show2Command {
 			case "-P.":
 			case "-Px":
 				return new Show2Command.PortOpenPath(command);
-			case "-ec":
-				return new Show2Command.Echo(command);
+			case "-wb":
+			case "-WB":
+				return new Show2Command.WeatherBoard(command);
 			case "--v":
 				return new Show2Command.Version(command);
 			default:
@@ -771,6 +795,8 @@ public abstract class Show2Command {
 				return new Show2Command.BLT(command);
 			case "si":
 				return new Show2Command.SIZ(command);
+			case "le":
+				return new Show2Command.LED(command);
 			default:
 				return null;
 			}

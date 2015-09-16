@@ -48,6 +48,7 @@
 #define GOTBRACKET	3
 #define INNUM           4
 #define IMGSHOW         5
+#define GOTTILDE 6
 
 #define LEFT_EDGE0             0
 #define RIGHT_EDGE320          319
@@ -56,7 +57,7 @@
 
 #define DEBUG
 
-const char version[] = "v1.6";
+const char version[] = "v1.6.1";
 
 typedef struct cursor {
         uint32_t row;
@@ -81,7 +82,7 @@ uint16_t num, row, col;
 uint16_t bottom_edge0 = BOTTOM_EDGE240;
 uint16_t right_edge0  = RIGHT_EDGE320;
 
-uint8_t pwm = 255;
+uint8_t pwm = 128;
 uint8_t textSize = 2;
 uint8_t rotation = 1;
 uint16_t foregroundColor, backgroundColor;
@@ -98,15 +99,23 @@ uint8_t cntenable = 0;
 // Use hardware SPI
 Adafruit_ILI9340 tft = Adafruit_ILI9340(_cs, _dc, _rst);
 
-// Sensors
+
+uint8_t dumpWeatherBoardData = 0;
+
+// WeatherBoard sensors
 Adafruit_BMP085_Unified bmp = Adafruit_BMP085_Unified(10085);
 ODROID_Si70xx si7020;
 ODROID_Si1132 si1132;
 
+//
+int sensorReadState=0;
+unsigned long sensorReadTime=0;
+const long sensorReadInterval=8000;
+
 void setup()
 {
         Serial.begin(500000);
-        Serial.println("Welcome to the WEATHER-THING");
+        Serial.println("Welcome from WEATHER-THING!");
 
         si1132.begin();
         bmp.begin();
@@ -121,8 +130,8 @@ void setup()
         tft.setRotation(rotation);
         tft.setTextSize(textSize);
         tft.setCursor(50, 50);
-        tft.print("Hello ODROID-SHOW!");
-        tft.setCursor(250, 200);
+        tft.print("WEATHER-THING!");
+        tft.setCursor(200, 200);
         tft.print(version);
 
         delay(1000);
@@ -131,6 +140,10 @@ void setup()
         
         Timer1.initialize(200000);
         Timer1.attachInterrupt(timerCallback);
+        
+        digitalWrite(3, HIGH);
+        digitalWrite(4, HIGH);
+        digitalWrite(6, HIGH);
 }
 void initPins()
 {
@@ -151,74 +164,56 @@ void timerCallback()
         readBtn();
 }
 
-unsigned char btn0Presses = 0;
-unsigned char btn0Releases = 0;
-unsigned char btn1Presses = 0;
-unsigned char btn1Releases = 0;
-unsigned char btn2Presses = 0;
-unsigned char btn2Releases = 0;
-
-unsigned char btn0Pushed = 0;
-unsigned char btn1Pushed = 0;
-unsigned char btn2Pushed = 0;
+unsigned int btn0Counter = 0;
+unsigned int btn1Counter = 0;
+unsigned int btn2Counter = 0;
 
 void readBtn()
 {
-        if (!digitalRead(A1) && (btn2Presses == 0)) {
-                btn2Presses = 1;
-                btn2Releases = 0;
-                btn2Pushed = 1;
-                digitalWrite(6, LOW);
-        }
+  // red
+  if (digitalRead(7)) {
+     btn0Counter = 0;
+  } else {
+     btn0Counter++;
+  }
+  
+  // green
+  if (digitalRead(A0)) {
+     btn1Counter = 0;
+  } else {
+     btn1Counter++;
+  }
+  
+  // blue
+  if (digitalRead(A1)) {
+     btn2Counter = 0;
+  } else {
+     btn2Counter++;
+  }
 
-        if (digitalRead(A1) && (btn2Releases == 0)) {
-                btn2Releases = 1;
-                btn2Presses = 0;
-                btn2Pushed = 0;
-                digitalWrite(6, HIGH);
-        }
-
-        if (!digitalRead(7) && (btn0Presses == 0)) {
-                btn0Presses = 1;
-                btn0Releases = 0;
-                btn0Pushed = 1;
-                if (pwm > 225)
-                        pwm = 255;
-                else
-                        pwm += 30;
-                analogWrite(ledPin, pwm);
-                digitalWrite(3, LOW);
-        }
-
-        if (digitalRead(7) && (btn0Releases == 0)) {
-                btn0Releases = 1;
-                btn0Presses = 0;
-                btn0Pushed = 0;
-                digitalWrite(3, HIGH);
-        }
-
-        if (!digitalRead(A0) && (btn1Presses == 0)) {
-                btn1Presses = 1;
-                btn1Releases = 0;
-                btn1Pushed = 1;
-                if (pwm < 30)
-                        pwm = 0;
-                else
-                        pwm -= 30;
-                analogWrite(ledPin, pwm);
-                digitalWrite(4, LOW);
-        }
-
-        if (digitalRead(A0) && (btn1Releases == 0)) {
-                btn1Releases = 1;
-                btn1Presses = 0;
-                btn1Pushed = 0;
-                digitalWrite(4, HIGH);
-        }
 }
 
 void loop(void)
 {
+  if (btn0Counter > 3) {
+    digitalWrite(3, LOW);
+    Serial.println("!! Show2: btn0=push");
+    btn0Counter=2;
+    digitalWrite(3, HIGH);
+  }
+  if (btn1Counter > 3) {
+    digitalWrite(4, LOW);
+    Serial.println("!! Show2: btn1=push");
+    btn1Counter=2;
+    digitalWrite(4, HIGH);
+  }
+  if (btn2Counter > 3) {
+    digitalWrite(6, LOW);
+    Serial.println("!! Show2: btn2=push");
+    btn2Counter=2;
+    digitalWrite(6, HIGH);
+  }
+
         if (current_state == IMGSHOW) {
                 if (Serial.available() > 1) {
                         rgb565lo = Serial.read();
@@ -248,6 +243,20 @@ void loop(void)
 
                         }
                 }
+        }
+        
+        if (dumpWeatherBoardData==1) {
+          unsigned long currentMillis = millis();
+          if (currentMillis - sensorReadTime >= sensorReadInterval) {
+        	  switch(sensorReadState) {
+              case 0: dumpBMP180(); break;
+              case 1: dumpSi1132(); break;
+              case 2: dumpSi7020(); break;
+        	  }
+              sensorReadState++;
+              sensorReadState%=3;
+        	  sensorReadTime = currentMillis;
+          }
         }
 }
 
@@ -299,6 +308,10 @@ int parsechar(unsigned char current_char)
                         switchstate(GOTBRACKET);
                         return 0;
 
+                case '~':
+                        switchstate(GOTTILDE);
+                        return 0;
+
                 case 'D':        // Cursor Down
                         cursorDown();
                         break;  
@@ -324,6 +337,36 @@ int parsechar(unsigned char current_char)
                 default:
                         switchstate(NOTSPECIAL);
                         return current_char;
+                }
+                switchstate(NOTSPECIAL);
+                return 0;
+
+        case GOTTILDE:
+                switch (current_char) {
+                case 'r':
+                         digitalWrite(3, HIGH);
+                         break;
+                case 'R':
+                         digitalWrite(3, LOW);
+                         break;  
+                case 'g':
+                         digitalWrite(4, HIGH);
+                         break;
+                case 'G':
+                         digitalWrite(4, LOW);
+                         break; 
+                case 'b':
+                         digitalWrite(6, HIGH);
+                         break;
+                case 'B':
+                         digitalWrite(6, LOW);
+                         break;
+                case 'w':
+                         dumpWeatherBoardData=0;
+                         break;
+                case 'W':
+                         dumpWeatherBoardData=1;
+                         break;
                 }
                 switchstate(NOTSPECIAL);
                 return 0;
@@ -556,41 +599,70 @@ uint16_t change_mColor(int opt)
 }
 
 //
-// from weather_board.ino
+// originally from weather_board.ino
 //
 
-float BMP180Temperature = 0;
-float BMP180Pressure = 0;
-float BMP180Altitude = 0;
 
-float Si7020Temperature = 0;
-float Si7020Humidity = 0;
-
-float Si1132UVIndex = 0;
-uint32_t Si1132Visible = 0;
-uint32_t Si1132IR = 0;
-
-void getBMP180()
+void dumpBMP180()
 {
+        float BMP180Temperature = 0;
+        float BMP180Pressure = 0;
+        // float BMP180Altitude = 0;
+
         sensors_event_t event;
         bmp.getEvent(&event);
         
         if (event.pressure) {
                 bmp.getTemperature(&BMP180Temperature);
                 BMP180Pressure = event.pressure;
-                BMP180Altitude = bmp.pressureToAltitude(1025, event.pressure);
+                // BMP180Altitude = bmp.pressureToAltitude(1025, event.pressure);
+                
+                Serial.print("!! BMP180: temp=");
+                Serial.print(BMP180Temperature, 8);
+                Serial.print(", ");
+                
+                Serial.print("pres=");
+                Serial.print(BMP180Pressure, 8);
+                Serial.println();
         }
 }
 
-void getSi1132()
+void dumpSi1132()
 {
+        float Si1132UVIndex = 0;
+        uint32_t Si1132Visible = 0;
+        uint32_t Si1132IR = 0;
+
         Si1132UVIndex = si1132.readUV()/100.0;
         Si1132Visible = si1132.readVisible();
         Si1132IR = si1132.readIR();
+        
+        Serial.print("!! Si1132: UV=");
+        Serial.print(Si1132UVIndex, 8);
+        Serial.print(", ");
+        
+        Serial.print("vis=");
+        Serial.print(Si1132Visible);
+        Serial.print(", ");
+
+        Serial.print("IR=");
+        Serial.print(Si1132IR);
+        Serial.println();
 }
 
-void getSi7020()
+void dumpSi7020()
 {
+        float Si7020Temperature = 0;
+        float Si7020Humidity = 0;
+
         Si7020Temperature = si7020.readTemperature();
         Si7020Humidity = si7020.readHumidity();
+        
+        Serial.print("!! Si7020: temp=");
+        Serial.print(Si7020Temperature, 8);
+        Serial.print(", ");
+        
+        Serial.print("humi=");
+        Serial.print(Si7020Humidity, 8);
+        Serial.println();
 }
