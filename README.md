@@ -83,7 +83,18 @@ Valid values are `0-3`.  Change to a different value and then repeat the Ino `cl
 
 ### weatherThing Arduino sketch
 
+I have made some enhancements to the `show_main.ino` sketch to dump sensor data from the [Odroid WeatherBoard](http://odroid.com/dokuwiki/doku.php?id=en:weather-board), if one is attached to the I2C headers on the Show2.  Use the `-WB` command to enable the WeatherBoard feature:
+
 ![weatherThing](https://github.com/cjdaly/Show2-Eboogaloo/blob/master/images/Cali-weatherThing.jpg?raw=true)
+
+Also new are the `led` commands.  Use `ledB` to turn the blue LED on and `ledb` to turn it off.  Similarly commands control the green and red LEDs.
+
+To build and deploy the weatherThing sketch:
+
+    cd ~/Show2-Eboogaloo/Show2-Eboogaloo-SETUP
+    ant -f setup.xml weatherThing.build
+    cd weatherThing/inoProject
+    ino upload -p /dev/ttyUSB0
 
 ### fold extension channel
 
