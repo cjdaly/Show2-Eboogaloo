@@ -81,9 +81,13 @@ Depending on the orientation of your Show2, it may make sense to switch the defa
 
 Valid values are `0-3`.  Change to a different value and then repeat the Ino `clean`, `build`, `upload` sequence described above.
 
+### weatherThing Arduino sketch
+
+![weatherThing](https://github.com/cjdaly/Show2-Eboogaloo/blob/master/images/Cali-weatherThing.jpg?raw=true)
+
 ### fold extension channel
 
 To use the Show2 with [fold](https://github.com/cjdaly/fold), copy the 2 jars in `~/Show2-Eboogaloo/Show2-Eboogaloo-SETUP/plugins` to the `~/fold-runtime/extend/plugins` directory and then run `./fold.sh extend` from the `fold-runtime` directory.
 
-![Hello World](https://github.com/cjdaly/Show2-Eboogaloo/blob/master/images/Show2-fold-channel.jpg?raw=true)
+![fold channel](https://github.com/cjdaly/Show2-Eboogaloo/blob/master/images/Show2-fold-channel.jpg?raw=true)
 
