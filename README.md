@@ -83,9 +83,9 @@ Valid values are `0-3`.  Change to a different value and then repeat the Ino `cl
 
 ### weatherThing Arduino sketch
 
-I have made some enhancements to the `show_main.ino` sketch, forking off a new sketch called `weatherThing.ino`.  This supports new commands to enable (`-WB`) and disable (`-wb`) dumping of sensor data from the [Odroid WeatherBoard](http://odroid.com/dokuwiki/doku.php?id=en:weather-board), if one is attached to the I2C headers on the Show2.  
+I have made some enhancements to the `show_main.ino` sketch, forking off a new sketch called `weatherThing.ino`.  This supports new commands to enable (`-WB`) and disable (`-wb`) dumping of sensor data from the [Odroid WeatherBoard](http://odroid.com/dokuwiki/doku.php?id=en:weather-board), if one is attached to the I2C headers on the Show2.
 
-Also new are the `led` commands.  Use `ledB` to turn the blue LED on and `ledb` to turn it off.  Similarly commands control the green and red LEDs.
+Also new are the `led` commands.  Use `ledB` to turn the blue LED on and `ledb` to turn it off.  Similar commands control the green and red LEDs.
 
 ![weatherThing](https://github.com/cjdaly/Show2-Eboogaloo/blob/master/images/Cali-weatherThing.jpg?raw=true)
 
