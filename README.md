@@ -43,7 +43,7 @@ Then get Show2-Eboogaloo bits and run setup script:
     cd Show2-Eboogaloo/Show2-Eboogaloo-SETUP
     ant -f setup.xml
 
-Press the Show2 `RESET` button and note the message that is briefly displayed as the Show2 restarts. If you see the message `Hello ODROID-SHOW!` with version **`v1.6`**, this should be compatible with `Show2-Eboogaloo`.  Otherwise, you may need to skip to the sections below on Arduino sketches and try to load the `weatherThing.ino` sketch.
+Press the Show2 `RESET` button and note the message that is briefly displayed as the Show2 restarts. If you see the message `Hello ODROID-SHOW!` with version **`v1.6`**, this should be compatible with `Show2-Eboogaloo`.  Otherwise, you may need to skip to the sections below on Arduino sketches and upload either `show_main.ino` or `weatherThing.ino`.
 
 And now you should be ready for...
 
