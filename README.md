@@ -43,6 +43,8 @@ Then get Show2-Eboogaloo bits and run setup script:
     cd Show2-Eboogaloo/Show2-Eboogaloo-SETUP
     ant -f setup.xml
 
+Press the Show2 `RESET` button and note the message that is briefly displayed as the Show2 restarts. If you see the message `Hello ODROID-SHOW!` with version **`v1.6`**, this should be compatible with `Show2-Eboogaloo`.  Otherwise, you may need to skip to the sections below on Arduino sketches and try to load the `weatherThing.ino` sketch.
+
 And now you should be ready for...
 
 ![Hello World](https://github.com/cjdaly/Show2-Eboogaloo/blob/master/images/Show2-HelloWorld.jpg?raw=true)
@@ -58,8 +60,6 @@ Note in this example how quotes are needed for the final argument, because it co
     ./show2.sh -T/dev/ttyUSB1 +hello fg3 '+ world'
 
 ### Arduino action
-
-When the Show2 resets, the message `Hello ODROID-SHOW!` is briefly displayed along with a version.  If the version says **`v1.6`**, then great! (That is the same version I am currently running.)
 
 The `setup.xml` script clones the hardkernel [ODROID-SHOW](https://github.com/hardkernel/ODROID-SHOW) repo to the home directory and does a `git checkout` to the version mentioned above.  Inside the `ODROID-SHOW` repo is the Arduino sketch (`~/ODROID-SHOW/show_main/show_main.ino`) that serves as the Show2 firmware.
 
