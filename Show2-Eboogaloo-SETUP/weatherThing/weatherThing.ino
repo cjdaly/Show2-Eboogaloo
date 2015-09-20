@@ -57,7 +57,7 @@
 
 #define DEBUG
 
-const char version[] = "v1.6.1";
+const char version[] = "1.6.2";
 
 typedef struct cursor {
         uint32_t row;
@@ -116,6 +116,8 @@ void setup()
 {
         Serial.begin(500000);
         Serial.println("Welcome from WEATHER-THING!");
+        Serial.print("!! weatherThing: version=");
+        Serial.println(version);
 
         si1132.begin();
         bmp.begin();
@@ -131,7 +133,8 @@ void setup()
         tft.setTextSize(textSize);
         tft.setCursor(50, 50);
         tft.print("WEATHER-THING!");
-        tft.setCursor(200, 200);
+        tft.setCursor(160, 200);
+        tft.print("ver: ");
         tft.print(version);
 
         delay(1000);
@@ -245,17 +248,19 @@ void loop(void)
                 }
         }
         
-        if (dumpWeatherBoardData==1) {
-          unsigned long currentMillis = millis();
-          if (currentMillis - sensorReadTime >= sensorReadInterval) {
-        	  switch(sensorReadState) {
+        unsigned long currentMillis = millis();
+        if (currentMillis - sensorReadTime >= sensorReadInterval) {
+          if (dumpWeatherBoardData==1) {
+        	switch(sensorReadState) {
               case 0: dumpBMP180(); break;
               case 1: dumpSi1132(); break;
               case 2: dumpSi7020(); break;
-        	  }
-              sensorReadState++;
-              sensorReadState%=3;
-        	  sensorReadTime = currentMillis;
+        	}
+            sensorReadState++;
+            sensorReadState%=3;
+        	sensorReadTime = currentMillis;
+          } else {
+            Serial.println("..");
           }
         }
 }

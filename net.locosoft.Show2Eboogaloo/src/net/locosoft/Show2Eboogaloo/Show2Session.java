@@ -151,7 +151,7 @@ public class Show2Session {
 
 				do {
 					String line = reader.readLine();
-					if (line != null) {
+					if ((line != null) && (!"..".equals(line))) {
 						pushOutputLine(line);
 					}
 					Thread.sleep(100);
