@@ -21,6 +21,7 @@ import net.locosoft.Show2Eboogaloo.Show2Session;
 import net.locosoft.fold.channel.chatter.ChatterItemDetails;
 import net.locosoft.fold.channel.chatter.IChatterChannel;
 import net.locosoft.fold.channel.fold.IFoldChannel;
+import net.locosoft.fold.channel.thing.IThingChannel;
 import net.locosoft.fold.channel.vitals.IVitalsChannel;
 import net.locosoft.fold.channel.vitals.Vital;
 import net.locosoft.fold.channel.vitals.VitalsItemDetails;
@@ -34,6 +35,7 @@ public class Show2Feeder extends MonitorThread {
 
 	private IChatterChannel _chatterChannel;
 	private IVitalsChannel _vitalsChannel;
+	private IThingChannel _thingChannel;
 
 	public Show2Feeder(Show2Channel channel, Show2Session session) {
 		_channel = channel;
@@ -43,14 +45,16 @@ public class Show2Feeder extends MonitorThread {
 				IChatterChannel.class);
 		_vitalsChannel = _channel.getChannelService().getChannel(
 				IVitalsChannel.class);
+		_thingChannel = _channel.getChannelService().getChannel(
+				IThingChannel.class);
 	}
 
 	protected long getSleepTimePreCycle() {
-		return 500;
+		return 1000;
 	}
 
 	protected long getSleepTimePostCycle() {
-		return 1500;
+		return 1000;
 	}
 
 	private String _thingName;
@@ -63,7 +67,6 @@ public class Show2Feeder extends MonitorThread {
 	private boolean _restart = true;
 
 	public boolean cycle() throws Exception {
-
 		while (_thingName == null) { // wait for ThingChannel init
 			Thread.sleep(500);
 			_thingName = _channel.getChannelService().getChannelData("thing",
@@ -86,6 +89,13 @@ public class Show2Feeder extends MonitorThread {
 			Show2Commands commands = new Show2Commands();
 			commands.addCommand("cls");
 			commands.addCommand("blt64");
+
+			String hasWeatherBoard = _thingChannel.getThingConfigProperties()
+					.getProperty("Show2.WeatherBoard");
+			if ("true".equals(hasWeatherBoard)) {
+				commands.addCommand("-WB");
+			}
+
 			_session.enqueueCommands(commands);
 			_restart = false;
 			restarted = true;

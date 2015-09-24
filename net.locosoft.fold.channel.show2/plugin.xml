@@ -9,5 +9,75 @@
             implementation="net.locosoft.fold.channel.show2.internal.Show2Channel">
       </channel>
    </extension>
+   <extension
+         point="net.locosoft.fold.channel.vitals">
+      <vitals
+            checkInterval="0"
+            id="weatherThing.BMP180"
+            implementation="net.locosoft.fold.channel.show2.internal.BMP180Vitals">
+         <vital
+               datatype="double"
+               id="temp"
+               name="temperature"
+               units="Celsius">
+         </vital>
+         <vital
+               datatype="double"
+               id="pres"
+               name="pressure"
+               units="hPa">
+         </vital>
+      </vitals>
+      <vitals
+            checkInterval="0"
+            id="weatherThing.Si1132"
+            implementation="net.locosoft.fold.channel.show2.internal.Si1132Vitals">
+         <vital
+               datatype="float"
+               id="UV"
+               name="ultraviolet light"
+               units="lux">
+         </vital>
+         <vital
+               datatype="int"
+               id="vis"
+               name="visible light"
+               units="lux">
+         </vital>
+         <vital
+               datatype="int"
+               id="IR"
+               name="infrared light"
+               units="lux">
+         </vital>
+      </vitals>
+      <vitals
+            checkInterval="0"
+            id="weatherThing.Si7020"
+            implementation="net.locosoft.fold.channel.show2.internal.Si7020Vitals">
+         <vital
+               datatype="double"
+               id="temp"
+               name="temperature"
+               units="Celsius">
+         </vital>
+         <vital
+               datatype="double"
+               id="humi"
+               name="humidity"
+               units="%">
+         </vital>
+      </vitals>
+      <vitals
+            checkInterval="0"
+            id="weatherThing.weatherThing"
+            implementation="net.locosoft.fold.channel.show2.internal.WeatherThingVitals">
+         <vital
+               datatype="string"
+               id="version"
+               name="version">
+         </vital>
+      </vitals>
+   </extension>
 
 </plugin>

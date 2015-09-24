@@ -57,7 +57,7 @@
 
 #define DEBUG
 
-const char version[] = "1.6.2";
+const char version[] = "1.6.3";
 
 typedef struct cursor {
         uint32_t row;
@@ -100,6 +100,7 @@ uint8_t cntenable = 0;
 Adafruit_ILI9340 tft = Adafruit_ILI9340(_cs, _dc, _rst);
 
 
+uint8_t firstLoop = 1;
 uint8_t dumpWeatherBoardData = 0;
 
 // WeatherBoard sensors
@@ -115,9 +116,8 @@ const long sensorReadInterval=8000;
 void setup()
 {
         Serial.begin(500000);
-        Serial.println("Welcome from WEATHER-THING!");
-        Serial.print("!! weatherThing: version=");
-        Serial.println(version);
+        Serial.println();
+        Serial.println("..");
 
         si1132.begin();
         bmp.begin();
@@ -198,21 +198,33 @@ void readBtn()
 
 void loop(void)
 {
+  if (firstLoop == 1) {
+    Serial.println("..");
+
+    Serial.println("!! Show2: reset=now !!");
+    
+    Serial.print("!! weatherThing: version=");
+    Serial.print(version);
+    Serial.println(" !!");
+    
+    firstLoop = 0;
+  }
+
   if (btn0Counter > 3) {
     digitalWrite(3, LOW);
-    Serial.println("!! Show2: btn0=push");
+    Serial.println("!! Show2: btn0=push !!");
     btn0Counter=2;
     digitalWrite(3, HIGH);
   }
   if (btn1Counter > 3) {
     digitalWrite(4, LOW);
-    Serial.println("!! Show2: btn1=push");
+    Serial.println("!! Show2: btn1=push !!");
     btn1Counter=2;
     digitalWrite(4, HIGH);
   }
   if (btn2Counter > 3) {
     digitalWrite(6, LOW);
-    Serial.println("!! Show2: btn2=push");
+    Serial.println("!! Show2: btn2=push !!");
     btn2Counter=2;
     digitalWrite(6, HIGH);
   }
@@ -628,7 +640,7 @@ void dumpBMP180()
                 
                 Serial.print("pres=");
                 Serial.print(BMP180Pressure, 8);
-                Serial.println();
+                Serial.println(" !!");
         }
 }
 
@@ -652,7 +664,7 @@ void dumpSi1132()
 
         Serial.print("IR=");
         Serial.print(Si1132IR);
-        Serial.println();
+        Serial.println(" !!");
 }
 
 void dumpSi7020()
@@ -669,5 +681,5 @@ void dumpSi7020()
         
         Serial.print("humi=");
         Serial.print(Si7020Humidity, 8);
-        Serial.println();
+        Serial.println(" !!");
 }

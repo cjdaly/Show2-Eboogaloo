@@ -24,11 +24,16 @@ public class Show2Channel extends AbstractChannel implements IShow2Channel {
 
 	private Show2Session _session;
 	private Show2Feeder _feeder;
+	private Show2Listener _listener;
 
 	public void init() {
 		try {
 			_session = new Show2Session();
 			_session.start(false);
+
+			_listener = new Show2Listener(this, _session);
+			_listener.start();
+
 			_feeder = new Show2Feeder(this, _session);
 			_feeder.start();
 		} catch (InterruptedException e) {
@@ -39,6 +44,9 @@ public class Show2Channel extends AbstractChannel implements IShow2Channel {
 	public void fini() {
 		if (_feeder != null) {
 			_feeder.stop();
+		}
+		if (_listener != null) {
+			_listener.stop();
 		}
 		if (_session != null) {
 			_session.stop();

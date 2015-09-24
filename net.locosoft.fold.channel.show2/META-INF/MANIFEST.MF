@@ -8,5 +8,6 @@ Require-Bundle: net.locosoft.fold.required,
  net.locosoft.fold.channel.chatter,
  net.locosoft.fold.channel.fold,
  net.locosoft.fold.channel.vitals,
+ net.locosoft.fold.channel.thing,
  net.locosoft.Show2Eboogaloo
 Export-Package: net.locosoft.fold.channel.show2
