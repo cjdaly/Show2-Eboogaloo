@@ -520,10 +520,10 @@ public class WeatherBoardDemo extends Thread {
 					commands.addCommand("fg3");
 					commands.addCommand("xy0," + (startRow + 1));
 					commands.addCommand("+" + getValue("vis", 5));
-					commands.addCommand("/6," + (startRow + 1) + "/"
-							+ getValue("IR", 5));
-					commands.addCommand("/" + (startRow + 1) + "r/"
-							+ getValue("UV", 5));
+					commands.addCommand("xy6," + (startRow + 1));
+					commands.addCommand("+" + getValue("IR", 5));
+					commands.addCommand("xy12," + (startRow + 1));
+					commands.addCommand("+" + getValue("UV", 5));
 				}
 				break;
 			case 1:
@@ -539,10 +539,10 @@ public class WeatherBoardDemo extends Thread {
 					commands.addCommand("fg6");
 					commands.addCommand("xy0," + (startRow + 1));
 					commands.addCommand("+" + getValue("vis", 5));
-					commands.addCommand("/6," + (startRow + 1) + "/"
-							+ getValue("IR", 5));
-					commands.addCommand("/" + (startRow + 1) + "r/"
-							+ getValue("UV", 5));
+					commands.addCommand("xy6," + (startRow + 1));
+					commands.addCommand("+" + getValue("IR", 5));
+					commands.addCommand("xy12," + (startRow + 1));
+					commands.addCommand("+" + getValue("UV", 5));
 				}
 				break;
 			}
