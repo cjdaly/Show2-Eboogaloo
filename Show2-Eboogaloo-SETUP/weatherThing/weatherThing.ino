@@ -57,7 +57,7 @@
 
 #define DEBUG
 
-const char version[] = "1.6.3";
+const char version[] = "1.6.4";
 
 typedef struct cursor {
         uint32_t row;
@@ -465,7 +465,8 @@ int parsechar(unsigned char current_char)
                         case 'H':        // Move cursor to row, col
                         case 'f':        // ditto
                                 tmpnum = (tmpnum > 0) ? tmpnum - 1 : 0;
-                                col = (tmpnum > bottom_edge0) ? bottom_edge0 : tmpnum;
+                                //col = (tmpnum > bottom_edge0) ? bottom_edge0 : tmpnum;
+                                col = tmpnum;
                                 tft.setCursor(tft.cursor_x = row, tft.cursor_y = col);
                                 break;
 

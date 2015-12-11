@@ -175,7 +175,7 @@ public abstract class Show2Command {
 			switch (session._screenRotation) {
 			case 0:
 			case 2:
-				return 200 / session._textWidth;
+				return 240 / session._textWidth;
 			case 1:
 			case 3:
 			default:
@@ -703,7 +703,36 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 74, text = "--v - print version information to stdout")
+	@Usage(order = 73, text = "-WDN[Title] - WeatherBoard demo (N=0-3 screen orientation)")
+	public static class WeatherDemo extends Show2Command {
+		private static final Pattern _Pattern = Pattern
+				.compile("-WD([0-3])(.*)");
+
+		public WeatherDemo(String command) {
+			super(_Pattern, command);
+		}
+
+		protected boolean readParams(Matcher matcher) {
+			_rot = matcher.group(1).charAt(0);
+			_title = matcher.group(2);
+			return true;
+		}
+
+		private char _rot;
+		private String _title;
+
+		public void eval(BufferedWriter writer, Show2Session session)
+				throws IOException, InterruptedException {
+			if (writer == null) {
+				session._weatherBoardDemoMode = true;
+			} else {
+				session._screenRotation = _rot - '0';
+				session._weatherBoardDemoTitle = _title;
+			}
+		}
+	}
+
+	@Usage(order = 80, text = "--v - print version information to stdout")
 	public static class Version extends Show2Command {
 		private static final Pattern _Pattern = Pattern.compile("--v");
 
@@ -714,7 +743,7 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				line("Show2-EBoogaloo version 0.1.0.9 <weatherThing.ino, ver: 1.6.x>");
+				line("Show2-EBoogaloo version 0.1.0.10 <weatherThing.ino, ver: 1.6.x>");
 			}
 		}
 
@@ -758,6 +787,8 @@ public abstract class Show2Command {
 			case "-wb":
 			case "-WB":
 				return new Show2Command.WeatherBoard(command);
+			case "-WD":
+				return new Show2Command.WeatherDemo(command);
 			case "--v":
 				return new Show2Command.Version(command);
 			default:

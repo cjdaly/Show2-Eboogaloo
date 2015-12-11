@@ -65,9 +65,13 @@ public class Show2Commands {
 		for (Show2Command command : _commands) {
 			if ((command instanceof Show2Command.DevicePath)
 					|| (command instanceof Show2Command.PortOpenPath)
-					|| (command instanceof Show2Command.Version)) {
+					|| (command instanceof Show2Command.Version)
+					|| (command instanceof Show2Command.WeatherDemo)) {
 				try {
 					command.eval(null, session);
+					if (command instanceof Show2Command.WeatherDemo) {
+						foundSessionCommand = true;
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (InterruptedException e) {

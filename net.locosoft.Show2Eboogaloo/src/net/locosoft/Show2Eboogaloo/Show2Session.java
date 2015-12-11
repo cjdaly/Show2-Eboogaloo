@@ -45,11 +45,22 @@ public class Show2Session {
 	public void start(boolean joinSessionThread) throws InterruptedException {
 		runPortOpen();
 
+		if (_weatherBoardDemoMode) {
+			_keepYourselfAlive = true;
+			_dumpToStdout = false;
+		}
+
 		Show2Reader readerThread = new Show2Reader();
 		readerThread.start();
 
 		CommandWriter writerThread = new CommandWriter();
 		writerThread.start();
+
+		if (_weatherBoardDemoMode) {
+			WeatherBoardDemo weatherBoardDemo = new WeatherBoardDemo(this);
+			weatherBoardDemo.start();
+		}
+
 		if (joinSessionThread) {
 			writerThread.join();
 		}
@@ -64,6 +75,8 @@ public class Show2Session {
 	private boolean _keepYourselfAlive;
 	private boolean _dumpToStdout;
 	private boolean _writerDone = false;
+	boolean _weatherBoardDemoMode = false;
+	String _weatherBoardDemoTitle = null;
 	int _textWidth = 12;
 	int _textHeight = 16;
 	int _textSize = 2;
