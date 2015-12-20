@@ -72,9 +72,7 @@ public class WeatherBoardDemo extends Thread {
 					Show2Commands commands = new Show2Commands();
 					commands.addCommand("-WB");
 					_session.enqueueCommands(commands);
-				}
 
-				if (_epicycleCount == 0) {
 					_demoElements.add(new ResetDemoElement());
 				}
 
@@ -180,10 +178,16 @@ public class WeatherBoardDemo extends Thread {
 		}
 
 		void miniBanner(Show2Commands commands, int position) {
-			miniBanner(commands, null, position);
+			miniBanner(commands, null, position, null);
 		}
 
 		void miniBanner(Show2Commands commands, String title, int position) {
+			miniBanner(commands, title, position, null);
+		}
+
+		void miniBanner(Show2Commands commands, String title, int position,
+				String endText) {
+
 			int row = 0;
 			switch (position) {
 			case 0:
@@ -211,6 +215,12 @@ public class WeatherBoardDemo extends Thread {
 				commands.addCommand("xy2," + row);
 				commands.addCommand("fg7");
 				commands.addCommand("+" + title);
+			}
+
+			if (endText != null) {
+				commands.addCommand("xy2," + row);
+				commands.addCommand("fg5");
+				commands.addCommand("/" + row + "r/" + endText);
 			}
 		}
 
@@ -248,6 +258,12 @@ public class WeatherBoardDemo extends Thread {
 			case 0:
 				commands.addCommand("rot" + getRot());
 				commands.addCommand("cls");
+
+				while (_demoElements.size() > 1) {
+					_demoElements.removeLast();
+					_cycleCount++;
+					_epicycleCount = -1;
+				}
 				break;
 			case 1:
 				commands.addCommand("siz4");
@@ -367,7 +383,15 @@ public class WeatherBoardDemo extends Thread {
 			String ipCommand = "ip -o -4 addr";
 			Show2Util.execCommand(ipCommand, processOut);
 
-			miniBanner(commands, "IP Address", 0);
+			int demoElementCount = _demoElements.size();
+			if (demoElementCount > 4) {
+				_demoElements.add(new ResetDemoElement());
+				miniBanner(commands, "IP Address", 0, "q:" + demoElementCount);
+			} else if (demoElementCount > 1) {
+				miniBanner(commands, "IP Address", 0, "q:" + demoElementCount);
+			} else {
+				miniBanner(commands, "IP Address", 0);
+			}
 			clearSection(commands, 0);
 
 			int startRow;
