@@ -332,7 +332,10 @@ public class WeatherBoardDemo extends Thread {
 			case 0:
 				if (_clearSection) {
 					clearSection(commands, 0);
-					miniBanner(commands, "Time", 0);
+					// miniBanner(commands, "Time", 0);
+
+					int demoElementCount = _demoElements.size();
+					miniBanner(commands, "Time", 0, "q:" + demoElementCount);
 				}
 				commands.addCommand("siz3");
 				commands.addCommand("bg0");
