@@ -76,6 +76,12 @@ public class WeatherBoardDemo extends Thread {
 					_demoElements.add(new ResetDemoElement());
 				}
 
+				int demoElementCount = _demoElements.size();
+				int show2QueueCount = _session.getCommandQueueSize();
+				if ((demoElementCount > 4) || (show2QueueCount > 16)) {
+					_demoElements.add(new ResetDemoElement());
+				}
+
 				Thread.sleep(500);
 
 				// process new sensor data
@@ -256,14 +262,15 @@ public class WeatherBoardDemo extends Thread {
 		boolean emitCommands(Show2Commands commands) {
 			switch (_step++) {
 			case 0:
-				commands.addCommand("rot" + getRot());
-				commands.addCommand("cls");
-
 				while (_demoElements.size() > 1) {
 					_demoElements.removeLast();
 					_cycleCount++;
 					_epicycleCount = -1;
 				}
+				_session.clearCommands();
+
+				commands.addCommand("rot" + getRot());
+				commands.addCommand("cls");
 				break;
 			case 1:
 				commands.addCommand("siz4");
@@ -334,8 +341,14 @@ public class WeatherBoardDemo extends Thread {
 					clearSection(commands, 0);
 					// miniBanner(commands, "Time", 0);
 
-					int queueCount = _session.getWriterQueueSize();
-					miniBanner(commands, "Time", 0, "q:" + queueCount);
+					int demoElementCount = _demoElements.size();
+					int show2QueueCount = _session.getCommandQueueSize();
+					miniBanner(commands, "Time", 0, "q:" + demoElementCount
+							+ "," + show2QueueCount);
+
+					if ((demoElementCount > 4) || (show2QueueCount > 16)) {
+
+					}
 				}
 				commands.addCommand("siz3");
 				commands.addCommand("bg0");
