@@ -134,6 +134,10 @@ public class Show2Session {
 
 	private LinkedList<Show2Commands> _commandQueue = new LinkedList<Show2Commands>();
 
+	public int getWriterQueueSize() {
+		return _commandQueue.size();
+	}
+
 	public synchronized void enqueueCommands(Show2Commands commands) {
 		_commandQueue.add(commands);
 	}

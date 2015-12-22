@@ -334,8 +334,8 @@ public class WeatherBoardDemo extends Thread {
 					clearSection(commands, 0);
 					// miniBanner(commands, "Time", 0);
 
-					int demoElementCount = _demoElements.size();
-					miniBanner(commands, "Time", 0, "q:" + demoElementCount);
+					int queueCount = _session.getWriterQueueSize();
+					miniBanner(commands, "Time", 0, "q:" + queueCount);
 				}
 				commands.addCommand("siz3");
 				commands.addCommand("bg0");
@@ -386,15 +386,7 @@ public class WeatherBoardDemo extends Thread {
 			String ipCommand = "ip -o -4 addr";
 			Show2Util.execCommand(ipCommand, processOut);
 
-			int demoElementCount = _demoElements.size();
-			if (demoElementCount > 4) {
-				_demoElements.add(new ResetDemoElement());
-				miniBanner(commands, "IP Address", 0, "q:" + demoElementCount);
-			} else if (demoElementCount > 1) {
-				miniBanner(commands, "IP Address", 0, "q:" + demoElementCount);
-			} else {
-				miniBanner(commands, "IP Address", 0);
-			}
+			miniBanner(commands, "IP Address", 0);
 			clearSection(commands, 0);
 
 			int startRow;
