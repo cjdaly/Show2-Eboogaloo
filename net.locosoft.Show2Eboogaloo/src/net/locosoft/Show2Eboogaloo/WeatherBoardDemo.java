@@ -78,11 +78,12 @@ public class WeatherBoardDemo extends Thread {
 
 				int demoElementCount = _demoElements.size();
 				int show2QueueCount = _session.getCommandQueueSize();
-				if ((demoElementCount > 4) || (show2QueueCount > 16)) {
+				if ((demoElementCount > 4) || (show2QueueCount > 16)
+						|| (_epicycleCount > 1024)) {
 					_demoElements.add(new ResetDemoElement());
 				}
 
-				Thread.sleep(500);
+				Thread.sleep(800);
 
 				// process new sensor data
 				String line = _session.pullOutputLine();
@@ -96,8 +97,8 @@ public class WeatherBoardDemo extends Thread {
 				}
 
 				// update time / IP address
-				if (_epicycleCount % 20 == 0) {
-					if (_epicycleCount % 120 == 0) {
+				if (_epicycleCount % 16 == 0) {
+					if (_epicycleCount % 96 == 0) {
 						_demoElements.add(new IPAddressDemoElement());
 						_clearSection0 = true;
 					} else {
@@ -264,9 +265,9 @@ public class WeatherBoardDemo extends Thread {
 			case 0:
 				while (_demoElements.size() > 1) {
 					_demoElements.removeLast();
-					_cycleCount++;
-					_epicycleCount = -1;
 				}
+				_cycleCount++;
+				_epicycleCount = -1;
 				_session.clearCommands();
 
 				commands.addCommand("rot" + getRot());
@@ -338,17 +339,12 @@ public class WeatherBoardDemo extends Thread {
 			switch (_step++) {
 			case 0:
 				if (_clearSection) {
-					clearSection(commands, 0);
 					// miniBanner(commands, "Time", 0);
-
 					int demoElementCount = _demoElements.size();
 					int show2QueueCount = _session.getCommandQueueSize();
 					miniBanner(commands, "Time", 0, "q:" + demoElementCount
 							+ "," + show2QueueCount);
-
-					if ((demoElementCount > 4) || (show2QueueCount > 16)) {
-
-					}
+					clearSection(commands, 0);
 				}
 				commands.addCommand("siz3");
 				commands.addCommand("bg0");
