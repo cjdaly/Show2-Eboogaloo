@@ -79,11 +79,11 @@ public class WeatherBoardDemo extends Thread {
 				int demoElementCount = _demoElements.size();
 				int show2QueueCount = _session.getCommandQueueSize();
 				if ((demoElementCount > 4) || (show2QueueCount > 16)
-						|| (_epicycleCount > 1024)) {
+						|| (_epicycleCount > 2048)) {
 					_demoElements.add(new ResetDemoElement());
 				}
 
-				Thread.sleep(800);
+				Thread.sleep(650);
 
 				// process new sensor data
 				String line = _session.pullOutputLine();
@@ -182,6 +182,29 @@ public class WeatherBoardDemo extends Thread {
 				commands.addCommand("fg" + fgTrue);
 			else
 				commands.addCommand("fg" + fgFalse);
+		}
+
+		void miniTrailer(Show2Commands commands, int position, String endText) {
+			int row = 0;
+			switch (position) {
+			case 0:
+				row = isVertical() ? 2 : 2;
+				break;
+			case 1:
+				row = isVertical() ? 8 : 6;
+				break;
+			case 2:
+				row = isVertical() ? 14 : 11;
+				break;
+			}
+
+			if (endText != null) {
+				commands.addCommand("siz2");
+				commands.addCommand("bg0");
+				commands.addCommand("xy2," + row);
+				commands.addCommand("fg5");
+				commands.addCommand("/" + row + "r/" + endText);
+			}
 		}
 
 		void miniBanner(Show2Commands commands, int position) {
@@ -338,13 +361,17 @@ public class WeatherBoardDemo extends Thread {
 
 			switch (_step++) {
 			case 0:
+				// miniBanner(commands, "Time", 0);
+				int demoElementCount = _demoElements.size();
+				int show2QueueCount = _session.getCommandQueueSize();
+
 				if (_clearSection) {
-					// miniBanner(commands, "Time", 0);
-					int demoElementCount = _demoElements.size();
-					int show2QueueCount = _session.getCommandQueueSize();
-					miniBanner(commands, "Time", 0, "q:" + demoElementCount
-							+ "," + show2QueueCount);
+					miniBanner(commands, "Time", 0, "" + _epicycleCount + ";"
+							+ demoElementCount + ";" + show2QueueCount);
 					clearSection(commands, 0);
+				} else {
+					miniTrailer(commands, 0, "" + _epicycleCount + ";"
+							+ demoElementCount + ";" + show2QueueCount);
 				}
 				commands.addCommand("siz3");
 				commands.addCommand("bg0");
