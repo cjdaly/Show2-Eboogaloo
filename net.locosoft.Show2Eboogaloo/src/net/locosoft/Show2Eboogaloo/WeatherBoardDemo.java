@@ -83,7 +83,7 @@ public class WeatherBoardDemo extends Thread {
 					_demoElements.add(new ResetDemoElement());
 				}
 
-				Thread.sleep(650);
+				Thread.sleep(720);
 
 				// process new sensor data
 				String line = _session.pullOutputLine();
