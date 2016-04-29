@@ -463,33 +463,34 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 42, text = "sizN - set text size (N=2-9)")
+	@Usage(order = 42, text = "sizN - set text size (N=2-19)")
 	public static class SIZ extends Show2Command {
-		private static final Pattern _Pattern = Pattern.compile("siz([2-9])");
+		private static final Pattern _Pattern = Pattern
+				.compile("siz([2-9]|(1[0-9]))");
 
 		public SIZ(String command) {
 			super(_Pattern, command);
 		}
 
 		protected boolean readParams(Matcher matcher) {
-			_siz = matcher.group(1).charAt(0);
+			_siz = getValue(matcher.group(1), 2);
 			return true;
 		}
 
-		private char _siz;
+		private int _siz;
 
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			writer.write(_CHAR_ESCAPE);
 			writer.write("[");
-			writer.write(_siz);
+			writer.write(Integer.toString(_siz));
 			writer.write("s");
 			writer.flush();
 			Thread.sleep(100);
 
-			session._textWidth = 6 * (_siz - '0');
-			session._textHeight = 8 * (_siz - '0');
-			session._textSize = (_siz - '0');
+			session._textWidth = 6 * _siz;
+			session._textHeight = 8 * _siz;
+			session._textSize = _siz;
 		}
 	}
 
@@ -743,7 +744,7 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				line("Show2-EBoogaloo version 0.1.0.13 <weatherThing.ino, ver: 1.6.x>");
+				line("Show2-EBoogaloo version 0.1.0.14 <weatherThing.ino, ver: 1.6.x>");
 			}
 		}
 
