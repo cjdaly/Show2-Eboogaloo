@@ -463,10 +463,9 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 42, text = "sizN - set text size (N=2-19)")
+	@Usage(order = 42, text = "sizN - set text size (N>=2)")
 	public static class SIZ extends Show2Command {
-		private static final Pattern _Pattern = Pattern
-				.compile("siz([2-9]|(1[0-9]))");
+		private static final Pattern _Pattern = Pattern.compile("siz(\\d+)");
 
 		public SIZ(String command) {
 			super(_Pattern, command);
@@ -744,7 +743,7 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				line("Show2-EBoogaloo version 0.1.0.14 <weatherThing.ino, ver: 1.6.x>");
+				line("Show2-EBoogaloo version 0.1.0.15 <weatherThing.ino, ver: 1.6.x>");
 			}
 		}
 
