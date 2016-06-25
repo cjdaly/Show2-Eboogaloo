@@ -52,7 +52,7 @@ public class Show2Session {
 		}
 	}
 
-	public void start(boolean joinSessionThread) throws InterruptedException {
+	private CommandWriter startHelper() {
 		runPortOpen();
 
 		if (_weatherBoardDemoMode) {
@@ -70,7 +70,15 @@ public class Show2Session {
 			WeatherBoardDemo weatherBoardDemo = new WeatherBoardDemo(this);
 			weatherBoardDemo.start();
 		}
+		return writerThread;
+	}
 
+	public void start() {
+		startHelper();
+	}
+
+	public void start(boolean joinSessionThread) throws InterruptedException {
+		CommandWriter writerThread = startHelper();
 		if (joinSessionThread) {
 			writerThread.join();
 		}
