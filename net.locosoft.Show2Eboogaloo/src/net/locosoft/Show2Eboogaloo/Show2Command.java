@@ -385,7 +385,8 @@ public abstract class Show2Command {
 		}
 	}
 
-	@Usage(order = 31, text = "bgN - set background color (N=0-7)")
+	@Usage(order = 31, text = { "bgN - set background color (N=0-7)",
+			"(0=black, 1=red, 2=green, 3=yellow, 4=blue, 5=magenta, 6=cyan, 7=white)" })
 	public static class BG extends Show2Command {
 		private static final Pattern _Pattern = Pattern.compile("bg(\\d)");
 
@@ -743,7 +744,7 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				line("Show2-EBoogaloo version 0.1.0.15 <weatherThing.ino, ver: 1.6.x>");
+				line("Show2-EBoogaloo version 0.1.0.16 <weatherThing.ino, ver: 1.6.x>");
 			}
 		}
 

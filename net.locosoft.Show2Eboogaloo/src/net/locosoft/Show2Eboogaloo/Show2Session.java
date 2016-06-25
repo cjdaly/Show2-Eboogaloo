@@ -23,11 +23,21 @@ import java.util.LinkedList;
 public class Show2Session {
 
 	public Show2Session() {
+		this("/dev/ttyUSB0");
+	}
+
+	public Show2Session(String devicePath) {
+		_devicePath = devicePath;
 		_keepYourselfAlive = true;
 		_dumpToStdout = false;
 	}
 
 	public Show2Session(Show2Commands commands) {
+		this("/dev/ttyUSB0", commands);
+	}
+
+	public Show2Session(String devicePath, Show2Commands commands) {
+		_devicePath = devicePath;
 		_keepYourselfAlive = false;
 		_dumpToStdout = true;
 		enqueueCommands(commands);
@@ -72,6 +82,7 @@ public class Show2Session {
 
 	// session state
 	//
+	String _devicePath;
 	private boolean _keepYourselfAlive;
 	private boolean _dumpToStdout;
 	private boolean _writerDone = false;
@@ -82,7 +93,6 @@ public class Show2Session {
 	int _textSize = 2;
 	int _screenRotation = 1;
 	long _postCommandDelay = 100;
-	String _devicePath = "/dev/ttyUSB0";
 	String _portOpenPath = System
 			.getProperty("net.locosoft.Show2Eboogaloo.homeDir")
 			+ "/Show2-Eboogaloo-SETUP/port_open/port_open";
