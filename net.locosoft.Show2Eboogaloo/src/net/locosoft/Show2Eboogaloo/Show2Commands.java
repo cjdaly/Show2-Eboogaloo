@@ -60,6 +60,14 @@ public class Show2Commands {
 		}
 	}
 
+	public String[] getCommands() {
+		String[] commands = new String[_commands.size()];
+		for (int i = 0; i < commands.length; i++) {
+			commands[i] = _commands.get(i).getCommand();
+		}
+		return commands;
+	}
+
 	boolean preprocess(Show2Session session) {
 		boolean foundSessionCommand = false;
 		for (Show2Command command : _commands) {

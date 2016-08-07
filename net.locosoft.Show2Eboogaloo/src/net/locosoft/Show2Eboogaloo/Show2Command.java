@@ -744,7 +744,7 @@ public abstract class Show2Command {
 		public void eval(BufferedWriter writer, Show2Session session)
 				throws IOException, InterruptedException {
 			if (writer == null) {
-				line("Show2-EBoogaloo version 0.1.0.17 <weatherThing.ino, ver: 1.6.x>");
+				line("Show2-EBoogaloo version 0.1.0.18 <weatherThing.ino, ver: 1.6.x>");
 			}
 		}
 
