@@ -51,13 +51,17 @@ And now you should be ready for...
 
 ### normal usage
 
-The top level `Show2-Eboogaloo` directory contains several bash scripts.  The `find-show2-ttys.sh` script will search for connected Show2 devices and print their Linux device file path (e.g. `/dev/ttyUSB0`). The `show2.sh` script controls the Show2 by interpreting a series of command line arguments.  Run `./show2.sh` with no arguments to see a usage message.  To produce an image like in the picture above:
+The top level `Show2-Eboogaloo` directory contains several bash scripts.  The `find-show2-ttys.sh` script will search for connected Show2 devices and print their Linux device file path (e.g. `/dev/ttyUSB0`). The `show2.sh` script controls the Show2 by interpreting a series of command line arguments.  To produce an image like in the picture above:
 
     ./show2.sh siz4 fg3 +Hello fg6 '+ world!'
 
 Note in this example how quotes are needed for the final argument, because it contains whitespace.  If the Show2 is associated with a non-default device file, use the `-T` argument to specify the correct one:
 
     ./show2.sh -T/dev/ttyUSB1 +hello fg3 '+ world'
+
+Run `./show2.sh` with no arguments to see a usage message detailing the commands and syntax:
+
+![show2.sh usage](https://github.com/cjdaly/Show2-Eboogaloo/blob/master/images/show2-usage.png?raw=true)
 
 ### Arduino action
 
